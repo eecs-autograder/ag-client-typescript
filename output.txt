@@ -1,0 +1,67 @@
+
+> ag-client-typescript@0.0.0 test /home/jameslp/autograder/typescript-client
+> tsc -p . && jest
+
+PASS tests/test_user.ts
+Sending build context to Docker daemon  103.5MB
+Step 1/13 : FROM ubuntu:xenial
+ ---> 0b1edfbffd27
+Step 2/13 : WORKDIR /usr/src/app
+ ---> Using cache
+ ---> 03fb923ce211
+Step 3/13 : RUN apt-get update --fix-missing
+ ---> Using cache
+ ---> cce7a967d0a8
+Step 4/13 : RUN apt-get install -y software-properties-common build-essential
+ ---> Using cache
+ ---> 05e6c219f2d2
+Step 5/13 : RUN apt-get install -y postgresql-9.5 postgresql-client-9.5 postgresql-contrib-9.5 postgresql-server-dev-9.5
+ ---> Using cache
+ ---> b0e0f630de92
+Step 6/13 : RUN apt-get install -y redis-server
+ ---> Using cache
+ ---> 5872aa3402ab
+Step 7/13 : RUN add-apt-repository ppa:deadsnakes/ppa
+ ---> Using cache
+ ---> 574f18b518cb
+Step 8/13 : RUN apt-get update
+ ---> Using cache
+ ---> 46255fc297bf
+Step 9/13 : RUN apt-get install -y python3.6 python3.6-venv python3.6-dev
+ ---> Using cache
+ ---> 6c0fc8cf1a28
+Step 10/13 : RUN apt-get install curl
+ ---> Using cache
+ ---> bc13b8450d14
+Step 11/13 : RUN curl https://bootstrap.pypa.io/get-pip.py | python3.6
+ ---> Using cache
+ ---> 5f22a127b969
+Step 12/13 : COPY ./autograder-server /usr/src/app/
+ ---> Using cache
+ ---> 87503f42f77c
+Step 13/13 : RUN python3.6 -m pip install --no-cache-dir -r requirements.txt
+ ---> Using cache
+ ---> 657907d27ba8
+Successfully built 657907d27ba8
+Successfully tagged typescript-cli-test-server:latest
+0b3b1fc66c1428d3c6bc279567f0ad995c6de3cef9837cb9c1fb8d4468574d6d
+CONTAINER ID        IMAGE                        COMMAND                  CREATED                  STATUS                  PORTS               NAMES
+0b3b1fc66c14        typescript-cli-test-server   "python3.6 /usr/src/…"   Less than a second ago   Up Less than a second   9000/tcp            cli-test-server
+cli-test-server
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+(node:18360) UnhandledPromiseRejectionWarning: Error: connect EINVAL 0.0.35.40:80 - Local (0.0.0.0:0)
+    at Object._errnoException (util.js:992:11)
+    at _exceptionWithHostPort (util.js:1014:20)
+    at internalConnect (net.js:960:16)
+    at defaultTriggerAsyncIdScope (internal/async_hooks.js:284:19)
+    at GetAddrInfoReqWrap.emitLookup [as callback] (net.js:1106:9)
+    at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:97:10)
+(node:18360) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). (rejection id: 2)
+(node:18360) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+PASS tests/test_course.ts (5.71s)
+
+Test Suites: 2 passed, 2 total
+Tests:       2 passed, 2 total
+Snapshots:   0 total
+Time:        5.936s, estimated 7s
+Ran all test suites.
