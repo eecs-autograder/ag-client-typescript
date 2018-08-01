@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  django:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: typescript-cli-django
+    ports:
+      - "9000:9000"
+    command: python3 /usr/src/app/manage.py runserver 0.0.0.0:9000
+    env_file:
+      - ./autograder-server/_dev.env
+    environment:
+      # Set to false to disable real authentication. Any other string value
+      # will enable real authentication.
+      # Then, using a browser plugin such as EditThisCookie, set the
+      # cookie "username=<email>" to set which user you want to
+      # authenticate as.
+      USE_REAL_AUTH: 'false'
+
+  postgres:
+    restart: unless-stopped
+    image: postgres:latest
+    container_name: typescript-cli-postgres
+    expose:
+      - "5432"
+    environment:
+      POSTGRES_PASSWORD: 'postgres'
+
+  redis:
+    restart: unless-stopped
+    image: redis:latest
+    expose:
+      - "6379"
+
+  rabbitmq:
+    image: 127.0.0.1:5000/rabbitmq
+    restart: unless-stopped
+    image: rabbitmq:latest
+    hostname: rabbit
+    expose:
+      - "5672"

@@ -4,7 +4,7 @@ module.exports = {
         "tests",
     ],
     "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+        "^.+\\.tsx?$": "ts-jest"
     },
     "testRegex": "(test_.*)|(test_.*\\.ts)$",
     "moduleFileExtensions": [
@@ -15,4 +15,4 @@ module.exports = {
     ],
     "moduleDirectories": ["node_modules", "."],
     "testEnvironment": "node",
-  }
+}

@@ -10,8 +10,7 @@ export class HttpClient {
     static get_instance(): AxiosInstance {
         if (HttpClient._instance === null) {
             HttpClient._instance = axios.create({
-                // baseURL: 'https://autograder.io/api/'
-                baseURL: 'localhost:9000'
+                baseURL: 'https://autograder.io/api/'
             });
         }
         return HttpClient._instance;

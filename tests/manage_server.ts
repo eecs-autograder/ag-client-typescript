@@ -1,33 +1,23 @@
 import * as child_process from 'child_process';
 
-const PROJ_ROOT = `${__dirname}/..`;
-
-export function build_server() {
+export function reset_db() {
+    // If you add -it to the docker command, be sure to set
+    // stdio to ['inherit', ...] for stdin.
     child_process.spawnSync(
-        'docker', ['build', '-t', 'typescript-cli-test-server', PROJ_ROOT],
-        {stdio: 'inherit'});
-}
+        'docker exec typescript-cli-django python3.6 manage.py flush --no-input',
+        {shell: true});
 
-export async function start_server() {
     child_process.spawnSync(
-        'docker', ['run', '--name', 'cli-test-server',
-                   '--env-file', `${PROJ_ROOT}/autograder-server/_dev.env`,
-                   '-e', 'AG_DB_HOST=localhost',
-                   '-e', 'AG_DB_PASSWORD=""',
-                   '--ports', '9000:9000',
-                   '-d', 'typescript-cli-test-server',
-                   'python3.6', '/usr/src/app/manage.py', 'runserver', '9000'],
-        {stdio: 'inherit'});
-    child_process.spawnSync('docker', ['ps'], {stdio: 'inherit'});
-
-    await timeout(3000);
+        'docker exec typescript-cli-django python3.6 manage.py migrate',
+        {shell: true});
 }
 
-export function destroy_server() {
-    child_process.spawnSync('docker', ['rm', '-f', 'cli-test-server'], {stdio: 'inherit'});
-    child_process.spawnSync('docker', ['ps'], {stdio: 'inherit'});
-}
-
-function timeout(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+export function run_in_django_shell(python_str: string) {
+    let result = child_process.spawnSync(
+        'docker', ['exec', '-it', 'typescript-cli-django', 'python3.6', 'manage.py', 'shell',
+                   '-c', python_str],
+        {stdio: ['inherit', 'pipe', 'pipe']}
+    );
+    console.log(result.stdout.toString());
+    console.log(result.stderr.toString());
 }
