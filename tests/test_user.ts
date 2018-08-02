@@ -1,6 +1,6 @@
 import { User } from "src/user";
 
-import { reset_db, run_in_django_shell } from "./manage_server";
+import { reset_db, run_in_django_shell } from "./setup";
 import { global_setup } from "./setup";
 
 beforeAll(() => {
@@ -12,7 +12,6 @@ beforeEach(() => {
 });
 
 test('get current user', async () => {
-    // await reset_db();
     let current_user = await User.get_current();
     expect(current_user.username).toBe('jameslp@umich.edu');
     expect(current_user.first_name).toBe('');
@@ -46,11 +45,34 @@ User.objects.filter(pk=${current_user.pk}).update(is_superuser=True)`;
 });
 
 test('user by pk not found', async () => {
-    fail();
+    return expect(
+        User.get_by_pk(10000)
+    ).rejects.toHaveProperty('response.status', 404);
 });
 
 test('refresh user', async () => {
-    fail();
+    let user = await User.get_current();
+    expect(user.username).toBe('jameslp@umich.edu');
+    expect(user.first_name).toBe('');
+    expect(user.last_name).toBe('');
+    expect(user.email).toBe('');
+    expect(user.is_superuser).toBe(false);
+
+    let set_fields = `
+from django.contrib.auth.models import User
+User.objects.filter(pk=${user.pk}).update(
+    is_superuser=True,
+    first_name='James',
+    last_name='Perretta',
+    email='jameslp@umich.edu')`;
+    run_in_django_shell(set_fields);
+
+    await user.refresh();
+    expect(user.username).toBe('jameslp@umich.edu');
+    expect(user.first_name).toBe('James');
+    expect(user.last_name).toBe('Perretta');
+    expect(user.email).toBe('jameslp@umich.edu');
+    expect(user.is_superuser).toBe(true);
 });
 
 test.skip('get courses is admin for', async () => {

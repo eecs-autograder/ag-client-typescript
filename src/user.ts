@@ -33,6 +33,11 @@ export class User extends APIObjectBase {
         let response = await HttpClient.get_instance().get<IUser>(`/users/${pk}/`);
         return new User(response.data);
     }
+
+    async refresh() {
+        let response = await HttpClient.get_instance().get<IUser>(`/users/${this.pk}/`);
+        Object.assign(this, response.data);
+    }
 }
 
 interface IUser extends User {}

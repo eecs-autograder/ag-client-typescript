@@ -2,17 +2,17 @@ export class APIObjectBase {
     constructor(public pk: number) {}
 
     // Saves the object to the API.
-    save(): void {
+    async save(): Promise<void> {
         throw new UnsupportedOperationError;
     }
 
     // Reloads the object from the API.
-    refresh(): void {
+    async refresh(): Promise<void> {
         throw new UnsupportedOperationError;
     }
 
     // Deletes the object. Note: not all objects support this operation.
-    delete(): void {
+    async delete(): Promise<void> {
         throw new UnsupportedOperationError;
     }
 }
