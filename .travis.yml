@@ -1,0 +1,41 @@
+sudo: required
+
+services:
+  - docker
+
+language: node_js
+node_js:
+  - 8
+
+env:
+  DOCKER_COMPOSE_VERSION=1.21.2
+
+before_install:
+  - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+  - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+  - sudo apt-get update
+
+  # HACK: Prevent docker installation from prompting us about which version of
+  # /etc/default/docker to use.
+  - sudo cp /etc/default/docker /tmp/etc-default-docker.travis
+  - sudo cp etc-default-docker.factory /etc/default/docker
+  - sudo apt-get install -y docker-ce
+  - sudo cp /tmp/etc-default-docker.travis /etc/default/docker
+
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+  - docker-compose build
+  - docker-compose up -d
+  - docker ps -a
+
+install:
+  - npm install
+
+script:
+  npm test
+
+notifications:
+  email: false

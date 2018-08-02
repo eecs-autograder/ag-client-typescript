@@ -11,6 +11,16 @@ beforeEach(() => {
     reset_db();
 });
 
+test('construct with defaults', async () => {
+    let user = new User({pk: 42, username: 'waluigi'});
+    expect(user.pk).toBe(42);
+    expect(user.username).toBe('waluigi');
+    expect(user.first_name).toBe('');
+    expect(user.last_name).toBe('');
+    expect(user.email).toBe('');
+    expect(user.is_superuser).toBe(false);
+});
+
 test('get current user', async () => {
     let current_user = await User.get_current();
     expect(current_user.username).toBe('jameslp@umich.edu');

@@ -14,7 +14,7 @@ export class User extends APIObjectBase {
                  first_name = '',
                  last_name = '',
                  email = '',
-                 is_superuser = false}: IUser) {
+                 is_superuser = false}: IUserCtor) {
         super(pk);
         this.pk = pk;
         this.username = username;
@@ -41,3 +41,11 @@ export class User extends APIObjectBase {
 }
 
 interface IUser extends User {}
+interface IUserCtor {
+    pk: number;
+    username: string;
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+    is_superuser?: boolean;
+}
