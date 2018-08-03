@@ -1,21 +1,16 @@
-export class APIObjectBase {
-    constructor(public pk: number) {}
-
-    // Saves the object to the API.
-    async save(): Promise<void> {
-        throw new UnsupportedOperationError;
-    }
-
-    // Reloads the object from the API.
-    async refresh(): Promise<void> {
-        throw new UnsupportedOperationError;
-    }
-
-    // Deletes the object. Note: not all objects support this operation.
-    async delete(): Promise<void> {
-        throw new UnsupportedOperationError;
-    }
+export interface UnsavedAPIObject {
+    create(): Promise<SaveableAPIObject>;
 }
 
-export class AGAPIError extends Error {}
-export class UnsupportedOperationError extends AGAPIError {}
+export interface SaveableAPIObject extends Refreshable {
+    pk: number;
+    save(): Promise<void>;
+}
+
+export interface Refreshable {
+    refresh(): Promise<void>;
+}
+
+export interface Deletable {
+    delete(): Promise<void>;
+}
