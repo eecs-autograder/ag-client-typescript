@@ -1,5 +1,5 @@
-import { HttpClient } from "./http_client";
 import { Refreshable } from "./base";
+import { HttpClient } from "./http_client";
 
 class UserData {
     pk: number;

@@ -1,7 +1,6 @@
 import { User } from "src/user";
 
-import { reset_db, run_in_django_shell } from "./setup";
-import { global_setup } from "./setup";
+import { global_setup, reset_db, run_in_django_shell } from "./setup";
 
 describe('User tests', () => {
     beforeAll(() => {

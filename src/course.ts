@@ -49,6 +49,7 @@ export class Course extends CourseData implements SaveableAPIObject {
     }
 }
 
+
 class UnsavedCourseData {
     name: string;
     semester: Semester | null;
