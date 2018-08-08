@@ -35,7 +35,7 @@ install:
   - npm install
 
 script:
-  npm lint && npm test
+  npm run lint && npm test
 
 notifications:
   email: false
