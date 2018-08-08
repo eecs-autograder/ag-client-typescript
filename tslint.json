@@ -61,7 +61,6 @@
         },
 
         "no-for-in-array": true,
-        "no-inferred-empty-object-type": true,
         "no-object-literal-type-assertion": true,
         "no-return-await": true,
         "no-shadowed-variable": {
