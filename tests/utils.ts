@@ -1,6 +1,6 @@
 import * as child_process from 'child_process';
 
-import { HttpClient } from "src/http_client";
+import { HttpClient } from "@ag_cli/http_client";
 
 export function global_setup() {
     HttpClient.get_instance().defaults.baseURL = 'http://localhost:9000/api/';
@@ -26,6 +26,29 @@ export function run_in_django_shell(python_str: string) {
     let result = child_process.spawnSync(
         'docker', ['exec', 'typescript-cli-django', 'python3.6', 'manage.py', 'shell',
                    '-c', python_str]);
-    console.log(result.stdout.toString());
-    console.log(result.stderr.toString());
+    let stdout = result.stdout.toString();
+    let stderr = result.stderr.toString();
+    if (result.status !== 0) {
+        console.log(result.status);
+        console.log(stderr);
+    }
+    return {stdout: stdout, stderr: stderr, status: result.status};
+}
+
+export function do_editable_fields_test(ts_class: {EDITABLE_FIELDS: string[]},
+                                        python_class_name: string) {
+    let print_editable_fields = `
+from autograder.core.models import Course
+print('\\n'.join(${python_class_name}.get_editable_fields()))
+    `;
+    let output = run_in_django_shell(print_editable_fields).stdout.trim();
+    let expected = output.split(/\s+/);
+    expected.sort();
+    let actual = ts_class.EDITABLE_FIELDS.slice();
+    actual.sort();
+    expect(actual).toEqual(expected);
+}
+
+export function sleep(seconds: number) {
+    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
 }

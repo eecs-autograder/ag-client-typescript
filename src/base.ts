@@ -1,7 +1,3 @@
-export interface UnsavedAPIObject {
-    create(): Promise<SaveableAPIObject>;
-}
-
 export interface SaveableAPIObject extends Refreshable {
     pk: number;
     save(): Promise<void>;

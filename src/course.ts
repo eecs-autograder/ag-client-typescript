@@ -1,5 +1,6 @@
-import { SaveableAPIObject, UnsavedAPIObject } from "./base";
+import { SaveableAPIObject } from "./base";
 import { HttpClient } from "./http_client";
+import { filter_keys, safe_assign } from "./utils";
 
 class CourseData {
     pk: number;
@@ -28,6 +29,16 @@ class CourseData {
 }
 
 export class Course extends CourseData implements SaveableAPIObject {
+    static async create(data: NewCourseData) {
+        let response = await HttpClient.get_instance().post<CourseData>(`/courses/`, data);
+        return new Course(response.data);
+    }
+
+    static async get_all() {
+        let response = await HttpClient.get_instance().get<CourseData[]>(`/courses/`);
+        return response.data.map(course_data => new Course(course_data));
+    }
+
     static async get_by_pk(pk: number) {
         let response = await HttpClient.get_instance().get<CourseData>(`/courses/${pk}/`);
         return new Course(response.data);
@@ -40,47 +51,33 @@ export class Course extends CourseData implements SaveableAPIObject {
         return new Course(response.data);
     }
 
-    save(): Promise<void> {
-        throw new Error();
+    async save(): Promise<void> {
+        let response = await HttpClient.get_instance().patch<CourseData>(
+            `/courses/${this.pk}/`, filter_keys(this, Course.EDITABLE_FIELDS)
+        );
+        safe_assign(this, response.data);
     }
 
-    refresh(): Promise<void> {
-        throw new Error();
+    static readonly EDITABLE_FIELDS: (keyof CourseData)[] = [
+        'name',
+        'semester',
+        'year',
+        'subtitle',
+        'num_late_days',
+    ];
+
+    async refresh(): Promise<void> {
+        let response = await HttpClient.get_instance().get<CourseData>(`/courses/${this.pk}/`);
+        safe_assign(this, response.data);
     }
 }
 
-
-class UnsavedCourseData {
+interface NewCourseData {
     name: string;
-    semester: Semester | null;
-    year: number | null;
-    subtitle: string;
-    num_late_days: number;
-
-    constructor({name = '',
-                 semester = null,
-                 year = null,
-                 subtitle = '',
-                 num_late_days = 0}: UnsavedCourseDataCtor) {
-        this.name = name;
-        this.semester = semester;
-        this.year = year;
-        this.subtitle = subtitle;
-        this.num_late_days = num_late_days;
-    }
-}
-interface UnsavedCourseDataCtor {
-    name?: string;
     semester?: Semester | null;
     year?: number | null;
     subtitle?: string;
     num_late_days?: number;
-}
-
-export class UnsavedCourse extends UnsavedCourseData implements UnsavedAPIObject {
-    create(): Promise<Course> {
-        throw new Error();
-    }
 }
 
 export enum Semester {

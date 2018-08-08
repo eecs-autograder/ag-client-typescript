@@ -14,6 +14,11 @@ module.exports = {
         "jsx"
     ],
     "moduleDirectories": ["node_modules", "."],
+    moduleNameMapper: {
+        '^@ag_cli/(.*)$': '<rootDir>/src/$1',
+        '^@ag_cli/tests/(.*)$': '<rootDir>/tests/$1'
+
+    },
     "testEnvironment": "node",
 
     "collectCoverage": true,

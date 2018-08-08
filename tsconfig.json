@@ -8,6 +8,14 @@
         "sourceMap": true,
         "strict": true,
         "target": "es5",
+        "paths": {
+            "@ag_cli/*": [
+                "src/*"
+            ],
+            "@ag_cli/tests/*": [
+                "tests/*"
+            ]
+        },
         "typeRoots": [
             "node_modules/@types"
         ],

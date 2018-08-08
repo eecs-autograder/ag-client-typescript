@@ -1,22 +1,14 @@
-import { Course, Semester, UnsavedCourse } from 'src/course';
+import { Course, Semester } from '@ag_cli/course';
 
-import { global_setup, reset_db, run_in_django_shell } from './setup';
+import { do_editable_fields_test, global_setup,
+         reset_db, run_in_django_shell, sleep } from './utils';
 
 beforeAll(() => {
     global_setup();
 });
 
 describe('Course ctor tests', () => {
-    test('Construct unsaved course', async () => {
-        let course = new UnsavedCourse({});
-        expect(course.name).toBe('Coursey');
-        expect(course.semester).toBe(null);
-        expect(course.year).toBe(null);
-        expect(course.subtitle).toBe('');
-        expect(course.num_late_days).toBe(0);
-    });
-
-    test('Construct course defaults', async () => {
+    test('Construct course', async () => {
         let now = (new Date()).toISOString();
         let course = new Course({
             pk: 44,
@@ -27,13 +19,13 @@ describe('Course ctor tests', () => {
             num_late_days: 2,
             last_modified: now
         });
-        expect(course.pk).toBe(44);
-        expect(course.name).toBe('New Course');
-        expect(course.semester).toBe(Semester.summer);
-        expect(course.year).toBe(2017);
-        expect(course.subtitle).toBe('FUN!');
-        expect(course.num_late_days).toBe(2);
-        expect(course.last_modified).toBe(now);
+        expect(course.pk).toEqual(44);
+        expect(course.name).toEqual('New Course');
+        expect(course.semester).toEqual(Semester.summer);
+        expect(course.year).toEqual(2017);
+        expect(course.subtitle).toEqual('FUN!');
+        expect(course.num_late_days).toEqual(2);
+        expect(course.last_modified).toEqual(now);
     });
 });
 
@@ -51,14 +43,14 @@ Course.objects.validate_and_create(name='Course', semester=Semester.spring, year
         run_in_django_shell(create_course);
 
         let course = await Course.get_by_fields('Course', Semester.spring, 2019);
-        expect(course.name).toBe('Course');
-        expect(course.semester).toBe(Semester.spring);
-        expect(course.year).toBe(2019);
-        expect(course.subtitle).toBe('Spam');
-        expect(course.num_late_days).toBe(2);
+        expect(course.name).toEqual('Course');
+        expect(course.semester).toEqual(Semester.spring);
+        expect(course.year).toEqual(2019);
+        expect(course.subtitle).toEqual('Spam');
+        expect(course.num_late_days).toEqual(2);
     });
 
-    test.only('get course by fields not found', async () => {
+    test('get course by fields not found', async () => {
         return expect(
             Course.get_by_fields('Nope', Semester.fall, 2020)
         ).rejects.toHaveProperty('response.status', 404);
@@ -67,47 +59,192 @@ Course.objects.validate_and_create(name='Course', semester=Semester.spring, year
     test('Get course by pk', async () => {
         let create_course = `
 from autograder.core.models import Course, Semester
-Course.objects.validate_and_create(name='Course', semester=Semester.spring, year=2019,
-                                   subtitle='Spam', num_late_days=2)
+Course.objects.validate_and_create(name='EECS 280', semester=Semester.summer, year=2021,
+                                   subtitle='Egg', num_late_days=1)
         `;
         run_in_django_shell(create_course);
 
-        let course = await Course.get_by_fields('Course', Semester.spring, 2019);
-        expect(course.name).toBe('Course');
-        expect(course.semester).toBe(Semester.spring);
-        expect(course.year).toBe(2019);
-        expect(course.subtitle).toBe('Spam');
-        expect(course.num_late_days).toBe(2);
-        fail();
+        let course = await Course.get_by_fields('EECS 280', Semester.summer, 2021);
+        expect(course.name).toEqual('EECS 280');
+        expect(course.semester).toEqual(Semester.summer);
+        expect(course.year).toEqual(2021);
+        expect(course.subtitle).toEqual('Egg');
+        expect(course.num_late_days).toEqual(1);
     });
 
     test('Get course by pk not found', async () => {
         return expect(
-            Course.get_by_pk(10000)
+            Course.get_by_pk(9000)
         ).rejects.toHaveProperty('response.status', 404);
     });
 });
 
 describe('List/create/save Course tests', () => {
+    beforeEach(() => {
+        reset_db();
+        let make_superuser = `
+from django.contrib.auth.models import User
+
+user = User.objects.get_or_create(username='jameslp@umich.edu')[0]
+user.is_superuser = True
+user.save()
+        `;
+
+        run_in_django_shell(make_superuser);
+    });
+
     test('Get all courses', async () => {
-        fail();
+        let create_courses = `
+from autograder.core.models import Course, Semester
+
+for i in range(3):
+    Course.objects.validate_and_create(name=f'EECS 28{i}', semester=Semester.fall, year=2019,
+                                       subtitle=f'Subtitle{i}', num_late_days=i)
+        `;
+        run_in_django_shell(create_courses);
+
+        let courses = await Course.get_all();
+        expect(courses.length).toEqual(3);
+
+        expect(courses[0].name).toEqual('EECS 280');
+        expect(courses[0].semester).toEqual(Semester.fall);
+        expect(courses[0].year).toEqual(2019);
+        expect(courses[0].subtitle).toEqual('Subtitle0');
+        expect(courses[0].num_late_days).toEqual(0);
+
+        expect(courses[1].name).toEqual('EECS 281');
+        expect(courses[1].semester).toEqual(Semester.fall);
+        expect(courses[1].year).toEqual(2019);
+        expect(courses[1].subtitle).toEqual('Subtitle1');
+        expect(courses[1].num_late_days).toEqual(1);
+
+        expect(courses[2].name).toEqual('EECS 282');
+        expect(courses[2].semester).toEqual(Semester.fall);
+        expect(courses[2].year).toEqual(2019);
+        expect(courses[2].subtitle).toEqual('Subtitle2');
+        expect(courses[2].num_late_days).toEqual(2);
     });
 
     test('Get all courses none exist', async () => {
-        fail();
+        let courses = await Course.get_all();
+        expect(courses).toEqual([]);
     });
 
+    test('Create course all params', async () => {
+        let course = await Course.create({
+                name: 'EECS 490',
+                semester: Semester.winter,
+                year: 2018,
+                subtitle: 'PL',
+                num_late_days: 1
+        });
 
-    test('Create course', async () => {
-        fail();
+        expect(course.name).toEqual('EECS 490');
+        expect(course.semester).toEqual(Semester.winter);
+        expect(course.year).toEqual(2018);
+        expect(course.subtitle).toEqual('PL');
+        expect(course.num_late_days).toEqual(1);
+
+        let loaded_course = await Course.get_by_pk(course.pk);
+        expect(loaded_course.name).toEqual(course.name);
     });
 
+    test('Create course only required params', async () => {
+        let course = await Course.create({
+            name: 'EECS 481'
+        });
+
+        expect(course.name).toEqual('EECS 481');
+        expect(course.semester).toEqual(null);
+        expect(course.year).toEqual(null);
+        expect(course.subtitle).toEqual('');
+        expect(course.num_late_days).toEqual(0);
+
+        let loaded_course = await Course.get_by_pk(course.pk);
+        expect(loaded_course.name).toEqual(course.name);
+    });
 
     test('Save course', async () => {
-        fail();
+        let course = await Course.create({
+            name: 'EECS 481'
+        });
+
+        let add_as_admin = `
+from django.contrib.auth.models import User
+from autograder.core.models import Course
+
+user = User.objects.get(username='jameslp@umich.edu')
+course = Course.objects.get(pk=${course.pk})
+course.admins.add(user)
+        `;
+        run_in_django_shell(add_as_admin);
+
+        course.name = 'EECS 9001';
+        course.semester = Semester.summer;
+        course.year = 2022;
+        course.subtitle = '20x6';
+        course.num_late_days = 1;
+
+        let old_timestamp = course.last_modified;
+        await sleep(1);
+        await course.save();
+
+        expect(course.name).toEqual('EECS 9001');
+        expect(course.semester).toEqual(Semester.summer);
+        expect(course.year).toEqual(2022);
+        expect(course.subtitle).toEqual('20x6');
+        expect(course.num_late_days).toEqual(1);
+
+        expect(course.last_modified).not.toEqual(old_timestamp);
+
+        let loaded_course = await Course.get_by_pk(course.pk);
+        expect(loaded_course.name).toEqual('EECS 9001');
+        expect(loaded_course.semester).toEqual(Semester.summer);
+        expect(loaded_course.year).toEqual(2022);
+        expect(loaded_course.subtitle).toEqual('20x6');
+        expect(loaded_course.num_late_days).toEqual(1);
+
+        expect(loaded_course.last_modified).not.toEqual(old_timestamp);
+    });
+
+    test('Check editable fields', async () => {
+        do_editable_fields_test(Course, 'Course');
     });
 
     test('Refresh course', async () => {
-        fail();
+        let course = await Course.create({
+            name: 'EECS 480'
+        });
+
+        expect(course.name).toEqual('EECS 480');
+        expect(course.semester).toEqual(null);
+        expect(course.year).toEqual(null);
+        expect(course.subtitle).toEqual('');
+        expect(course.num_late_days).toEqual(0);
+
+        let old_timestamp = course.last_modified;
+        await sleep(1);
+
+        let change_fields = `
+from autograder.core.models import Course, Semester
+course = Course.objects.get(pk=${course.pk})
+course.name = 'EECS 494'
+course.semester = Semester.winter
+course.year = 2022
+course.subtitle = 'Video Gormes'
+course.num_late_days = 3
+course.save()
+        `;
+        run_in_django_shell(change_fields);
+
+        await course.refresh();
+
+        // expect(course.name).toEqual('EECS 494');
+        expect(course.semester).toEqual(Semester.winter);
+        expect(course.year).toEqual(2022);
+        expect(course.subtitle).toEqual('Video Gormes');
+        expect(course.num_late_days).toEqual(3);
+
+        expect(course.last_modified).not.toEqual(old_timestamp);
     });
 });

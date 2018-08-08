@@ -1,5 +1,6 @@
-import { Refreshable } from "./base";
-import { HttpClient } from "./http_client";
+import { Refreshable } from "@ag_cli/base";
+import { HttpClient } from "@ag_cli/http_client";
+import { safe_assign } from "@ag_cli/utils";
 
 class UserData {
     pk: number;
@@ -37,6 +38,6 @@ export class User extends UserData implements Refreshable {
 
     async refresh() {
         let response = await HttpClient.get_instance().get<UserData>(`/users/${this.pk}/`);
-        Object.assign(this, response.data);
+        safe_assign(this, response.data);
     }
 }
