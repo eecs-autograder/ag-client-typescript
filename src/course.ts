@@ -1,6 +1,7 @@
-import { SaveableAPIObject } from "./base";
-import { HttpClient } from "./http_client";
-import { filter_keys, safe_assign } from "./utils";
+import { SaveableAPIObject } from "@ag_cli/base";
+import { HttpClient } from "@ag_cli/http_client";
+import { User, UserData } from "@ag_cli/user";
+import { filter_keys, safe_assign } from "@ag_cli/utils";
 
 class CourseData {
     pk: number;
@@ -69,6 +70,75 @@ export class Course extends CourseData implements SaveableAPIObject {
     async refresh(): Promise<void> {
         let response = await HttpClient.get_instance().get<CourseData>(`/courses/${this.pk}/`);
         safe_assign(this, response.data);
+    }
+
+    async get_admins(): Promise<User[]> {
+        let response = await HttpClient.get_instance().get<UserData[]>(
+            `/courses/${this.pk}/admins/`);
+        return response.data.map(user_data => new User(user_data));
+    }
+
+    add_admins(usernames: string[]) {
+        return HttpClient.get_instance().post(
+            `/courses/${this.pk}/admins/`, {'new_admins': usernames});
+    }
+
+    remove_admins(users: User[]) {
+        return HttpClient.get_instance().patch(
+            `/courses/${this.pk}/admins/`, {'remove_admins': users});
+    }
+
+    async get_staff(): Promise<User[]> {
+        let response = await HttpClient.get_instance().get<UserData[]>(
+            `/courses/${this.pk}/staff/`);
+        return response.data.map(user_data => new User(user_data));
+    }
+
+    add_staff(usernames: string[]) {
+        return HttpClient.get_instance().post(
+            `/courses/${this.pk}/staff/`, {'new_staff': usernames});
+    }
+
+    remove_staff(users: User[]) {
+        return HttpClient.get_instance().patch(
+            `/courses/${this.pk}/staff/`, {'remove_staff': users});
+    }
+
+    async get_students(): Promise<User[]> {
+        let response = await HttpClient.get_instance().get<UserData[]>(
+            `/courses/${this.pk}/students/`);
+        return response.data.map(user_data => new User(user_data));
+    }
+
+    add_students(usernames: string[]) {
+        return HttpClient.get_instance().post(
+            `/courses/${this.pk}/students/`, {'new_students': usernames});
+    }
+
+    remove_students(users: User[]) {
+        return HttpClient.get_instance().patch(
+            `/courses/${this.pk}/students/`, {'remove_students': users});
+    }
+
+    set_students(usernames: string[]) {
+        return HttpClient.get_instance().put(
+            `/courses/${this.pk}/students/`, {'new_students': usernames});
+    }
+
+    async get_handgraders(): Promise<User[]> {
+        let response = await HttpClient.get_instance().get<UserData[]>(
+            `/courses/${this.pk}/handgraders/`);
+        return response.data.map(user_data => new User(user_data));
+    }
+
+    add_handgraders(usernames: string[]) {
+        return HttpClient.get_instance().post(
+            `/courses/${this.pk}/handgraders/`, {'new_handgraders': usernames});
+    }
+
+    remove_handgraders(users: User[]) {
+        return HttpClient.get_instance().patch(
+            `/courses/${this.pk}/handgraders/`, {'remove_handgraders': users});
     }
 }
 

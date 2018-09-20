@@ -35,6 +35,18 @@ export function run_in_django_shell(python_str: string) {
     return {stdout: stdout, stderr: stderr, status: result.status};
 }
 
+export function make_superuser() {
+    let make_superuser_code = `
+from django.contrib.auth.models import User
+
+user = User.objects.get_or_create(username='jameslp@umich.edu')[0]
+user.is_superuser = True
+user.save()
+        `;
+
+    run_in_django_shell(make_superuser_code);
+}
+
 export function do_editable_fields_test(ts_class: {EDITABLE_FIELDS: string[]},
                                         python_class_name: string) {
     let print_editable_fields = `

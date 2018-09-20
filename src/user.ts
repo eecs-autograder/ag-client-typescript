@@ -2,7 +2,7 @@ import { Refreshable } from "@ag_cli/base";
 import { HttpClient } from "@ag_cli/http_client";
 import { safe_assign } from "@ag_cli/utils";
 
-class UserData {
+export class UserData {
     pk: number;
     username: string;
     first_name: string;

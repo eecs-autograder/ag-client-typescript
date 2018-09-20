@@ -1,6 +1,6 @@
 import { Course, Semester } from '@ag_cli/course';
 
-import { do_editable_fields_test, global_setup,
+import { do_editable_fields_test, global_setup, make_superuser,
          reset_db, run_in_django_shell, sleep } from './utils';
 
 beforeAll(() => {
@@ -239,12 +239,261 @@ course.save()
 
         await course.refresh();
 
-        // expect(course.name).toEqual('EECS 494');
+        expect(course.name).toEqual('EECS 494');
         expect(course.semester).toEqual(Semester.winter);
         expect(course.year).toEqual(2022);
         expect(course.subtitle).toEqual('Video Gormes');
         expect(course.num_late_days).toEqual(3);
 
         expect(course.last_modified).not.toEqual(old_timestamp);
+    });
+});
+
+// ----------------------------------------------------------------------------
+
+describe('Course admins tests', () => {
+    let course: Course;
+
+    beforeEach(async () => {
+        reset_db();
+        make_superuser();
+        course = await Course.create({name: 'course'});
+    });
+
+    test('List admins', async () => {
+        let create_users = `
+from django.contrib.auth.models import User
+from autograder.core.models import Course
+
+User.objects.bulk_create([
+    User(username='admin1'),
+    User(username='admin2'),
+    User(username='admin3'),
+])
+
+course = Course.objects.get(pk=${course.pk})
+course.admins.add(*User.objects.all())
+        `;
+
+        run_in_django_shell(create_users);
+
+        let users = await course.get_admins();
+        expect(users.length).toEqual(4);
+        let usernames = users.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['admin1', 'admin2', 'admin3', 'jameslp@umich.edu']);
+    });
+
+    test('Add admins', async () => {
+        await course.add_admins(['new_admin1', 'new_admin2']);
+        let admins = await course.get_admins();
+        expect(admins.length).toEqual(3);
+        let usernames = admins.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['jameslp@umich.edu', 'new_admin1', 'new_admin2']);
+    });
+
+    test('Remove admins', async () => {
+        await course.add_admins(['admin1', 'admin2', 'admin3']);
+        let admins = await course.get_admins();
+        let to_remove = admins.filter(
+            user => user.username === 'admin1' || user.username === 'admin3');
+        await course.remove_admins(to_remove);
+
+        admins = await course.get_admins();
+        expect(admins.length).toEqual(2);
+        let usernames = admins.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['admin2', 'jameslp@umich.edu']);
+    });
+});
+
+// ----------------------------------------------------------------------------
+
+describe('Course staff tests', () => {
+    let course: Course;
+
+    beforeEach(async () => {
+        reset_db();
+        make_superuser();
+        course = await Course.create({name: 'course'});
+    });
+
+    test('List staff', async () => {
+        let create_users = `
+from django.contrib.auth.models import User
+from autograder.core.models import Course
+
+User.objects.bulk_create([
+    User(username='staff1'),
+    User(username='staff2'),
+    User(username='staff3'),
+])
+
+course = Course.objects.get(pk=${course.pk})
+course.staff.add(*User.objects.exclude(username='jameslp@umich.edu'))
+        `;
+
+        run_in_django_shell(create_users);
+
+        let users = await course.get_staff();
+        expect(users.length).toEqual(3);
+        let usernames = users.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['staff1', 'staff2', 'staff3']);
+    });
+
+    test('Add staff', async () => {
+        await course.add_staff(['new_staff1', 'new_staff2']);
+        let staff = await course.get_staff();
+        expect(staff.length).toEqual(2);
+        let usernames = staff.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['new_staff1', 'new_staff2']);
+    });
+
+    test('Remove staff', async () => {
+        await course.add_staff(['staff1', 'staff2', 'staff3']);
+        let staff = await course.get_staff();
+        let to_remove = staff.filter(
+            user => user.username === 'staff2' || user.username === 'staff3');
+        await course.remove_staff(to_remove);
+
+        staff = await course.get_staff();
+        expect(staff.length).toEqual(1);
+        let usernames = staff.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['staff1']);
+    });
+});
+
+// ----------------------------------------------------------------------------
+
+describe('Course students tests', () => {
+    let course: Course;
+
+    beforeEach(async () => {
+        reset_db();
+        make_superuser();
+        course = await Course.create({name: 'course'});
+    });
+
+    test('List students', async () => {
+        let create_users = `
+from django.contrib.auth.models import User
+from autograder.core.models import Course
+
+User.objects.bulk_create([
+    User(username='student1'),
+    User(username='student2'),
+    User(username='student3'),
+])
+
+course = Course.objects.get(pk=${course.pk})
+course.students.add(*User.objects.exclude(username='jameslp@umich.edu'))
+        `;
+
+        run_in_django_shell(create_users);
+
+        let users = await course.get_students();
+        expect(users.length).toEqual(3);
+        let usernames = users.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['student1', 'student2', 'student3']);
+    });
+
+    test('Add students', async () => {
+        await course.add_students(['new_student1', 'new_student2']);
+        let students = await course.get_students();
+        expect(students.length).toEqual(2);
+        let usernames = students.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['new_student1', 'new_student2']);
+    });
+
+    test('Remove students', async () => {
+        await course.add_students(['student1', 'student2', 'student3']);
+        let students = await course.get_students();
+        let to_remove = students.filter(
+            user => user.username === 'student1' || user.username === 'student3');
+        await course.remove_students(to_remove);
+
+        students = await course.get_students();
+        expect(students.length).toEqual(1);
+        let usernames = students.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['student2']);
+    });
+
+    test('Set student list', async () => {
+        await course.add_students(['student1', 'student2', 'student3']);
+        let students = await course.get_students();
+        expect(students.length).toEqual(3);
+
+        await course.set_students(['student3', 'student4']);
+        students = await course.get_students();
+
+        let usernames = students.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['student3', 'student4']);
+    });
+});
+
+// ----------------------------------------------------------------------------
+
+describe('Course handgraders tests', () => {
+    let course: Course;
+
+    beforeEach(async () => {
+        reset_db();
+        make_superuser();
+        course = await Course.create({name: 'course'});
+    });
+
+    test('List handgraders', async () => {
+        let create_users = `
+from django.contrib.auth.models import User
+from autograder.core.models import Course
+
+User.objects.bulk_create([
+    User(username='handgrader1'),
+    User(username='handgrader2'),
+    User(username='handgrader3'),
+])
+
+course = Course.objects.get(pk=${course.pk})
+course.handgraders.add(*User.objects.exclude(username='jameslp@umich.edu'))
+        `;
+
+        run_in_django_shell(create_users);
+
+        let users = await course.get_handgraders();
+        expect(users.length).toEqual(3);
+        let usernames = users.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['handgrader1', 'handgrader2', 'handgrader3']);
+    });
+
+    test('Add handgraders', async () => {
+        await course.add_handgraders(['new_handgrader1', 'new_handgrader2']);
+        let handgraders = await course.get_handgraders();
+        expect(handgraders.length).toEqual(2);
+        let usernames = handgraders.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['new_handgrader1', 'new_handgrader2']);
+    });
+
+    test('Remove handgraders', async () => {
+        await course.add_handgraders(['handgrader1', 'handgrader2', 'handgrader3']);
+        let handgraders = await course.get_handgraders();
+        let to_remove = handgraders.filter(
+            user => user.username === 'handgrader1' || user.username === 'handgrader3');
+        await course.remove_handgraders(to_remove);
+
+        handgraders = await course.get_handgraders();
+        expect(handgraders.length).toEqual(1);
+        let usernames = handgraders.map(user => user.username);
+        usernames.sort();
+        expect(usernames).toEqual(['handgrader2']);
     });
 });
