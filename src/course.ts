@@ -3,7 +3,7 @@ import { HttpClient } from "@ag_cli/http_client";
 import { User, UserData } from "@ag_cli/user";
 import { filter_keys, safe_assign } from "@ag_cli/utils";
 
-class CourseData {
+export class CourseData {
     pk: number;
     name: string;
     semester: Semester | null;

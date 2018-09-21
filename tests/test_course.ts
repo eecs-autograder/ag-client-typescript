@@ -82,7 +82,7 @@ Course.objects.validate_and_create(name='EECS 280', semester=Semester.summer, ye
 describe('List/create/save Course tests', () => {
     beforeEach(() => {
         reset_db();
-        let make_superuser = `
+        let make_superuser_cmd = `
 from django.contrib.auth.models import User
 
 user = User.objects.get_or_create(username='jameslp@umich.edu')[0]
@@ -90,7 +90,7 @@ user.is_superuser = True
 user.save()
         `;
 
-        run_in_django_shell(make_superuser);
+        run_in_django_shell(make_superuser_cmd);
     });
 
     test('Get all courses', async () => {

@@ -1,6 +1,8 @@
-import { User } from "src/user";
+import { Course, Semester } from "@ag_cli/course";
+import { User } from "@ag_cli/user";
 
-import { global_setup, reset_db, run_in_django_shell } from "./utils";
+import { global_setup, make_superuser, reset_db, run_in_django_shell } from "./utils";
+
 
 describe('User tests', () => {
     beforeAll(() => {
@@ -28,6 +30,8 @@ describe('User tests', () => {
         expect(user.is_superuser).toEqual(true);
     });
 
+    // ------------------------------------------------------------------------
+
     test('get current user', async () => {
         let current_user = await User.get_current();
         expect(current_user.username).toEqual('jameslp@umich.edu');
@@ -49,6 +53,8 @@ User.objects.filter(pk=${current_user.pk}).update(is_superuser=True)`;
         expect(current_user.is_superuser).toEqual(true);
     });
 
+    // ------------------------------------------------------------------------
+
     test('get user by pk', async () => {
         let current_user = await User.get_current();
         let set_superuser = `
@@ -60,11 +66,15 @@ User.objects.filter(pk=${current_user.pk}).update(is_superuser=True)`;
         expect(user.is_superuser).toEqual(true);
     });
 
+    // ------------------------------------------------------------------------
+
     test('user by pk not found', async () => {
         return expect(
             User.get_by_pk(10000)
         ).rejects.toHaveProperty('response.status', 404);
     });
+
+    // ------------------------------------------------------------------------
 
     test('refresh user', async () => {
         let user = await User.get_current();
@@ -91,20 +101,156 @@ User.objects.filter(pk=${user.pk}).update(
         expect(user.is_superuser).toEqual(true);
     });
 
-    test.skip('get courses is admin for', async () => {
-        fail();
+    // ------------------------------------------------------------------------
+
+    test('Get current user roles for course, all roles false', async () => {
+        let make_course = `
+from autograder.core.models import Course, Semester
+c = Course.objects.validate_and_create(name='course', semester=Semester.fall, year=2020)
+        `;
+        run_in_django_shell(make_course);
+        let course = await Course.get_by_fields('course', Semester.fall, 2020);
+
+        let roles = await User.get_current_user_roles(course.pk);
+        expect(roles.is_admin).toBe(false);
+        expect(roles.is_staff).toBe(false);
+        expect(roles.is_student).toBe(false);
+        expect(roles.is_handgrader).toBe(false);
     });
 
-    test.skip('get courses is staff for', async () => {
-        fail();
+    // ------------------------------------------------------------------------
+
+    test('Get current user roles for course, all roles true', async () => {
+        make_superuser();
+
+        let make_course = `
+from autograder.core.models import Course, Semester
+from django.contrib.auth.models import User
+c = Course.objects.validate_and_create(name='course', semester=Semester.fall, year=2020)
+user = User.objects.get(username='jameslp@umich.edu')
+c.admins.add(user)
+c.staff.add(user)
+c.students.add(user)
+c.handgraders.add(user)
+        `;
+        run_in_django_shell(make_course);
+        let course = await Course.get_by_fields('course', Semester.fall, 2020);
+
+        let roles = await User.get_current_user_roles(course.pk);
+        expect(roles.is_admin).toBe(true);
+        expect(roles.is_staff).toBe(true);
+        expect(roles.is_student).toBe(true);
+        expect(roles.is_handgrader).toBe(true);
+    });
+});
+
+// ----------------------------------------------------------------------------
+
+describe('User reverse relation ship endpoint tests', () => {
+    beforeEach(() => {
+        reset_db();
     });
 
-    test.skip('get courses is student in', async () => {
-        fail();
+    test('get courses is admin for', async () => {
+        make_superuser();
+        let add_admins = `
+from autograder.core.models import Course
+from django.contrib.auth.models import User
+
+Course.objects.bulk_create([
+    Course(name='course1'),
+    Course(name='course2'),
+    Course(name='course3'),
+])
+
+user = User.objects.get(username='jameslp@umich.edu')
+for c in Course.objects.all():
+    c.admins.add(user)
+        `;
+        run_in_django_shell(add_admins);
+
+        let user = await User.get_current();
+        let courses = await user.courses_is_admin_for();
+        let course_names = courses.map(course => course.name);
+        expect(course_names).toEqual(['course1', 'course2', 'course3']);
     });
 
-    test.skip('get courses is handgrader for', async () => {
-        fail();
+    // ------------------------------------------------------------------------
+
+    test('get courses is staff for', async () => {
+        make_superuser();
+        let add_staff = `
+from autograder.core.models import Course
+from django.contrib.auth.models import User
+
+Course.objects.bulk_create([
+    Course(name='course1'),
+    Course(name='course2'),
+    Course(name='course3'),
+])
+
+user = User.objects.get(username='jameslp@umich.edu')
+for c in Course.objects.all():
+    c.staff.add(user)
+        `;
+        run_in_django_shell(add_staff);
+
+        let user = await User.get_current();
+        let courses = await user.courses_is_staff_for();
+        let course_names = courses.map(course => course.name);
+        expect(course_names).toEqual(['course1', 'course2', 'course3']);
+    });
+
+    // ------------------------------------------------------------------------
+
+    test('get courses is student in', async () => {
+        make_superuser();
+        let add_students = `
+from autograder.core.models import Course
+from django.contrib.auth.models import User
+
+Course.objects.bulk_create([
+    Course(name='course1'),
+    Course(name='course2'),
+    Course(name='course3'),
+])
+
+user = User.objects.get(username='jameslp@umich.edu')
+for c in Course.objects.all():
+    c.students.add(user)
+        `;
+        run_in_django_shell(add_students);
+
+        let user = await User.get_current();
+        let courses = await user.courses_is_student_in();
+        let course_names = courses.map(course => course.name);
+        expect(course_names).toEqual(['course1', 'course2', 'course3']);
+    });
+
+    // ------------------------------------------------------------------------
+
+    test('get courses is handgrader for', async () => {
+        make_superuser();
+        let add_handgraders = `
+from autograder.core.models import Course
+from django.contrib.auth.models import User
+
+Course.objects.bulk_create([
+    Course(name='course1'),
+    Course(name='course2'),
+    Course(name='course3'),
+])
+
+user = User.objects.get(username='jameslp@umich.edu')
+for c in Course.objects.all():
+    c.handgraders.add(user)
+        `;
+        run_in_django_shell(add_handgraders);
+
+        let user = await User.get_current();
+        let courses = await user.courses_is_handgrader_for();
+        let course_names = courses.map(course => course.name);
+        expect(course_names).toEqual(['course1', 'course2', 'course3']);
     });
 
     test.skip('group invitations received', async () => {
