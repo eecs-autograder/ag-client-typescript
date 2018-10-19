@@ -1,5 +1,5 @@
-import { Course, Semester } from "@ag_cli/course";
-import { User } from "@ag_cli/user";
+import { Course, Semester } from "src/course";
+import { User } from "src/user";
 
 import { global_setup, make_superuser, reset_db, run_in_django_shell } from "./utils";
 

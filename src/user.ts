@@ -1,7 +1,7 @@
-import { Refreshable } from "@ag_cli/base";
-import { Course, CourseData } from "@ag_cli/course";
-import { HttpClient } from "@ag_cli/http_client";
-import { safe_assign } from "@ag_cli/utils";
+import { Refreshable } from "src/base";
+import { Course, CourseData } from "src/course";
+import { HttpClient } from "src/http_client";
+import { safe_assign } from "src/utils";
 
 export class UserData {
     pk: number;
