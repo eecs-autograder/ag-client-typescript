@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "description": "A client for interacting with the autograder.io API.",
   "scripts": {
-    "test": "tsc -p . && jest --runInBand",
-    "lint": "tsc -p . && tslint --project ."
+    "test": "tsc -p . --noEmit && jest --runInBand",
+    "lint": "tsc -p . --noEmit && tslint --project .",
+    "build": "tsc -p ."
   },
   "author": "James Perretta",
   "license": "LGPL-3.0-only",

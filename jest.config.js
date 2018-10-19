@@ -14,13 +14,16 @@ module.exports = {
         "jsx"
     ],
     "moduleDirectories": ["node_modules", "."],
-    moduleNameMapper: {
-        '^@ag_cli/(.*)$': '<rootDir>/src/$1',
-        '^@ag_cli/tests/(.*)$': '<rootDir>/tests/$1'
-
-    },
     "testEnvironment": "node",
 
     collectCoverage: true,
-    collectCoverageFrom: ["<rootDir>/src/**/*.ts"]
-}
+    collectCoverageFrom: ["<rootDir>/src/**/*.ts"],
+    coverageThreshold: {
+        global: {
+            branches: 95,
+            functions: 100,
+            lines: 100,
+            statements: 100
+        }
+    }
+};

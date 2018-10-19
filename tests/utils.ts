@@ -1,6 +1,6 @@
 import * as child_process from 'child_process';
 
-import { HttpClient } from "@ag_cli/http_client";
+import { HttpClient } from "..";
 
 export function global_setup() {
     HttpClient.get_instance().defaults.baseURL = 'http://localhost:9000/api/';

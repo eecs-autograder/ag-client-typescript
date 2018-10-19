@@ -62,3 +62,4 @@ typings/
 .vscode
 etc-default-docker.factory
 .DS_Store
+dist

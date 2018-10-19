@@ -1,7 +1,7 @@
-import { SaveableAPIObject } from "@ag_cli/base";
-import { HttpClient } from "@ag_cli/http_client";
-import { User, UserData } from "@ag_cli/user";
-import { filter_keys, safe_assign } from "@ag_cli/utils";
+import { SaveableAPIObject } from "./base";
+import { HttpClient } from "./http_client";
+import { User, UserData } from "./user";
+import { filter_keys, safe_assign } from "./utils";
 
 export class CourseData {
     pk: number;

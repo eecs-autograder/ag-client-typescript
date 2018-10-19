@@ -1,4 +1,4 @@
-import { Course, Semester } from '@ag_cli/course';
+import { Course, Semester } from '..';
 
 import { do_editable_fields_test, global_setup, make_superuser,
          reset_db, run_in_django_shell, sleep } from './utils';
