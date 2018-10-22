@@ -3,11 +3,11 @@ import * as child_process from 'child_process';
 import { HttpClient } from "..";
 
 export function global_setup() {
-    HttpClient.get_instance().defaults.baseURL = 'http://localhost:9000/api/';
-    HttpClient.get_instance().defaults.headers = {
+    HttpClient.set_base_url('http://localhost:9000/api/');
+    HttpClient.set_default_headers({
         // Note: Make sure the test server is using fake authentication.
         Cookie: 'username=jameslp@umich.edu'
-    };
+    });
 
     child_process.spawnSync(
         'docker exec typescript-cli-django python3.6 manage.py migrate',
