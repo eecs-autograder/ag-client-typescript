@@ -1,6 +1,6 @@
 {
   "name": "ag-client-typescript",
-  "version": "0.0.0",
+  "version": "0.0.0-dev.1",
   "description": "A client for interacting with the autograder.io API.",
   "scripts": {
     "test": "tsc -p . --noEmit && jest --runInBand",
