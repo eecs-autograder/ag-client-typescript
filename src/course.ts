@@ -29,6 +29,13 @@ export class CourseData {
     }
 }
 
+export interface AllCourses {
+    courses_is_admin_for: Course[];
+    courses_is_staff_for: Course[];
+    courses_is_student_in: Course[];
+    courses_is_handgrader_for: Course[];
+}
+
 export class Course extends CourseData implements SaveableAPIObject {
     static async create(data: NewCourseData) {
         let response = await HttpClient.get_instance().post<CourseData>(`/courses/`, data);
@@ -38,6 +45,24 @@ export class Course extends CourseData implements SaveableAPIObject {
     static async get_all() {
         let response = await HttpClient.get_instance().get<CourseData[]>(`/courses/`);
         return response.data.map(course_data => new Course(course_data));
+    }
+
+    static async get_courses_for_user(user: User): Promise<AllCourses> {
+        let [admin_courses,
+             staff_courses,
+             student_courses,
+             handgrader_courses] = await Promise.all([
+                 user.courses_is_admin_for(),
+                 user.courses_is_staff_for(),
+                 user.courses_is_student_in(),
+                 user.courses_is_handgrader_for()
+        ]);
+        return {
+            courses_is_admin_for: admin_courses,
+            courses_is_staff_for: staff_courses,
+            courses_is_student_in: student_courses,
+            courses_is_handgrader_for: handgrader_courses,
+        };
     }
 
     static async get_by_pk(pk: number) {
@@ -66,6 +91,17 @@ export class Course extends CourseData implements SaveableAPIObject {
         'subtitle',
         'num_late_days',
     ];
+
+    async copy(new_name: string, new_semester: Semester, new_year: number) {
+        let response = await HttpClient.get_instance().post<CourseData>(
+            `/courses/${this.pk}/copy/`,
+            {
+                new_name: new_name,
+                new_semester: new_semester,
+                new_year: new_year
+            });
+        return new Course(response.data);
+    }
 
     async refresh(): Promise<void> {
         let response = await HttpClient.get_instance().get<CourseData>(`/courses/${this.pk}/`);

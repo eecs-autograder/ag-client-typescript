@@ -1,4 +1,4 @@
-import { Course, Semester } from '..';
+import { Course, Semester, User } from '..';
 
 import { do_editable_fields_test, global_setup, make_superuser,
          reset_db, run_in_django_shell, sleep } from './utils';
@@ -82,15 +82,7 @@ Course.objects.validate_and_create(name='EECS 280', semester=Semester.summer, ye
 describe('List/create/save Course tests', () => {
     beforeEach(() => {
         reset_db();
-        let make_superuser_cmd = `
-from django.contrib.auth.models import User
-
-user = User.objects.get_or_create(username='jameslp@umich.edu')[0]
-user.is_superuser = True
-user.save()
-        `;
-
-        run_in_django_shell(make_superuser_cmd);
+        make_superuser();
     });
 
     test('Get all courses', async () => {
@@ -130,13 +122,54 @@ for i in range(3):
         expect(courses).toEqual([]);
     });
 
+    test('Get courses for user', async () => {
+        let add_permissions = `
+from django.contrib.auth.models import User
+from autograder.core.models import Course
+
+user = User.objects.first()
+admin_course = Course.objects.validate_and_create(name='admin course')
+admin_course.admins.add(user)
+
+staff_course = Course.objects.validate_and_create(name='staff course')
+staff_course.staff.add(user)
+
+student_course = Course.objects.validate_and_create(name='student course')
+student_course.students.add(user)
+
+handgrader_course = Course.objects.validate_and_create(name='handgrader course')
+handgrader_course.handgraders.add(user)
+        `;
+        run_in_django_shell(add_permissions);
+
+        let courses = await Course.get_courses_for_user(await User.get_current());
+
+        expect(courses.courses_is_admin_for.length).toEqual(1);
+        expect(courses.courses_is_admin_for[0].name).toEqual('admin course');
+        expect(courses.courses_is_staff_for.length).toEqual(1);
+        expect(courses.courses_is_staff_for[0].name).toEqual('staff course');
+        expect(courses.courses_is_student_in.length).toEqual(1);
+        expect(courses.courses_is_student_in[0].name).toEqual('student course');
+        expect(courses.courses_is_handgrader_for.length).toEqual(1);
+        expect(courses.courses_is_handgrader_for[0].name).toEqual('handgrader course');
+    });
+
+    test('Get courses for user no courses exist', async () => {
+        let courses = await Course.get_courses_for_user(await User.get_current());
+
+        expect(courses.courses_is_admin_for).toEqual([]);
+        expect(courses.courses_is_staff_for).toEqual([]);
+        expect(courses.courses_is_student_in).toEqual([]);
+        expect(courses.courses_is_handgrader_for).toEqual([]);
+    });
+
     test('Create course all params', async () => {
         let course = await Course.create({
-                name: 'EECS 490',
-                semester: Semester.winter,
-                year: 2018,
-                subtitle: 'PL',
-                num_late_days: 1
+            name: 'EECS 490',
+            semester: Semester.winter,
+            year: 2018,
+            subtitle: 'PL',
+            num_late_days: 1
         });
 
         expect(course.name).toEqual('EECS 490');
@@ -246,6 +279,17 @@ course.save()
         expect(course.num_late_days).toEqual(3);
 
         expect(course.last_modified).not.toEqual(old_timestamp);
+    });
+
+    test('Copy course', async () => {
+        let course = await Course.create({name: 'EECS 480'});
+        let new_course = await course.copy('course clone', Semester.winter, 2021);
+
+
+        expect(new_course.name).toEqual('course clone');
+        expect(new_course.semester).toEqual(Semester.winter);
+        expect(new_course.year).toEqual(2021);
+        expect((await Course.get_all()).length).toEqual(2);
     });
 });
 
