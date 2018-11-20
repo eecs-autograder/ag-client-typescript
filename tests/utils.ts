@@ -64,3 +64,12 @@ print('\\n'.join(${python_class_name}.get_editable_fields()))
 export function sleep(seconds: number) {
     return new Promise(resolve => setTimeout(resolve, seconds * 1000));
 }
+
+export function expect_dates_equal(first: string | null, second: string | null) {
+    if (first === null || second === null) {
+        expect(first).toEqual(second);
+    }
+    else {
+        expect(new Date(first)).toEqual(new Date(second));
+    }
+}

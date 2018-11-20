@@ -8,7 +8,7 @@ export class ProjectData {
     last_modified: string;
     course: number;
     visible_to_students: boolean;
-    closing_time: string | null;
+    closing_time?: string | null;
     soft_closing_time: string | null;
     disallow_student_submissions: boolean;
     disallow_group_registration: boolean;
@@ -96,16 +96,33 @@ export class ProjectData {
 export class Project extends ProjectData implements SaveableAPIObject {
     static async create(data: NewProjectData) {
         let response = await HttpClient.get_instance().post<ProjectData>(
-            `/courses/${data.course}`, data);
+            `/courses/${data.course}/projects/`, data);
         return new Project(response.data);
     }
 
     static async get_by_pk(pk: number) {
+        let response = await HttpClient.get_instance().get<ProjectData>(`/projects/${pk}/`);
+        return new Project(response.data);
+    }
 
+    static async get_all_from_course(course_pk: number) {
+        let response = await HttpClient.get_instance().get<ProjectData[]>(
+            `/courses/${course_pk}/projects/`);
+        let projects = response.data.map(project_data => new Project(project_data));
+        projects.sort((first: Project, second: Project) => first.name.localeCompare(second.name));
+        return projects;
     }
 
     async save(): Promise<void> {
+        let response = await HttpClient.get_instance().patch<ProjectData>(
+            `/projects/${this.pk}/`, filter_keys(this, Project.EDITABLE_FIELDS)
+        );
+        safe_assign(this, response.data);
+    }
 
+    async refresh(): Promise<void> {
+        let response = await HttpClient.get_instance().get<ProjectData>(`/projects/${this.pk}/`);
+        safe_assign(this, response.data);
     }
 
     static readonly EDITABLE_FIELDS: (keyof ProjectData)[] = [
@@ -136,15 +153,17 @@ export class Project extends ProjectData implements SaveableAPIObject {
     ];
 
     async num_queued_submissions(): Promise<number> {
-
+        let response = await HttpClient.get_instance().get<number>(
+            `/projects/${this.pk}/num_queued_submissions/`
+        );
+        return response.data;
     }
 
-    async clear_results_cache(): Promise<void> {
-
-    }
-
-    async copy_to_course(): Promise<Project> {
-
+    async copy_to_course(course_pk: number, new_name: string): Promise<Project> {
+        let response = await HttpClient.get_instance().post<ProjectData>(
+            `/projects/${this.pk}/copy_to_course/${course_pk}/?new_project_name=${new_name}`
+        );
+        return new Project(response.data);
     }
 }
 
@@ -181,14 +200,14 @@ interface NewProjectData {
 // option that will only be used for ultimate submissions.
 export enum UltimateSubmissionPolicy {
     // The submission that was made most recently
-    most_recent = 'most_recent';
+    most_recent = 'most_recent',
 
     // The submission with the highest score, using "normal"
     // feedback settings to compute scores.
-    best_with_normal_fdbk = 'best_basic_score';
+    best_with_normal_fdbk = 'best_basic_score',
 
     // The submission with the highest score. The score used
     // for comparison is computed using maximum feedback
     // settings.
-    best = 'best';
+    best = 'best',
 }
