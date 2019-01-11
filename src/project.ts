@@ -167,7 +167,7 @@ export class Project extends ProjectData implements SaveableAPIObject {
     }
 }
 
-interface NewProjectData {
+export interface NewProjectData {
     name: string;
     course: number;
     visible_to_students?: boolean;
