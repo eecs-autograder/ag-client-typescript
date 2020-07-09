@@ -1,4 +1,4 @@
-import { Course, Group, GroupInvitation, GroupObserver, Project } from "..";
+import { Course, Group, GroupInvitation, GroupObserver, Project, User } from "..";
 
 import {
     global_setup,
@@ -13,18 +13,37 @@ beforeAll(() => {
 });
 
 test('Group invitation ctor', () => {
+    let sender = new User({
+        pk: 3, username: 'batman@umich.edu',
+        first_name: 'Bat', last_name: 'Man',
+        is_superuser: true
+    });
+    let recipients = [
+        new User({
+            pk: 7, username: 'robin@umich.edu',
+            first_name: 'Ro', last_name: 'Bin',
+            is_superuser: false
+        }),
+        new User({
+            pk: 4, username: 'alfred@umich.edu',
+            first_name: 'Al', last_name: 'Fred',
+            is_superuser: true
+        })
+    ];
     let invitation = new GroupInvitation({
         pk: 3,
-        invitation_creator: 'batman@umich.edu',
         project: 6,
-        invited_usernames: ['robin@umich.edu', 'alfred@umich.edu'],
-        invitees_who_accepted: ['robin@umich.edu'],
+        sender: sender,
+        recipients: recipients,
+        sender_username: sender.username,
+        recipient_usernames: recipients.map(recipient => recipient.username),
+        recipients_who_accepted: ['robin@umich.edu'],
     });
     expect(invitation.pk).toEqual(3);
-    expect(invitation.invitation_creator).toEqual('batman@umich.edu');
+    expect(invitation.sender_username).toEqual('batman@umich.edu');
     expect(invitation.project).toEqual(6);
-    expect(invitation.invited_usernames).toEqual(['robin@umich.edu', 'alfred@umich.edu']);
-    expect(invitation.invitees_who_accepted).toEqual(['robin@umich.edu']);
+    expect(invitation.recipient_usernames).toEqual(['robin@umich.edu', 'alfred@umich.edu']);
+    expect(invitation.recipients_who_accepted).toEqual(['robin@umich.edu']);
 });
 
 // For making sure notify_group_created is called when accepting an invitation
@@ -38,8 +57,6 @@ class TestGroupObserver implements GroupObserver {
 
     update_group_changed(group: Group): void {}
     update_group_merged(new_group: Group, group1_pk: number, group2_pk: number): void {}
-
-
 }
 
 describe('Group invitation tests', () => {
@@ -65,16 +82,16 @@ Course.objects.get(pk=${course.pk}).admins.add(*User.objects.all())
 
     test('Send group invitation', async () => {
         let invitation = await GroupInvitation.send_invitation(project.pk, ['user1', 'user2']);
-        expect(invitation.invitation_creator).toEqual(SUPERUSER_NAME);
+        expect(invitation.sender_username).toEqual(SUPERUSER_NAME);
         expect(invitation.project).toEqual(project.pk);
-        expect(invitation.invited_usernames).toEqual(['user1', 'user2']);
-        expect(invitation.invitees_who_accepted).toEqual([]);
+        expect(invitation.recipient_usernames).toEqual(['user1', 'user2']);
+        expect(invitation.recipients_who_accepted).toEqual([]);
 
         let loaded = await GroupInvitation.get_by_pk(invitation.pk);
-        expect(loaded.invitation_creator).toEqual(SUPERUSER_NAME);
+        expect(loaded.sender_username).toEqual(SUPERUSER_NAME);
         expect(loaded.project).toEqual(project.pk);
-        expect(loaded.invited_usernames).toEqual(['user1', 'user2']);
-        expect(loaded.invitees_who_accepted).toEqual([]);
+        expect(loaded.recipient_usernames).toEqual(['user1', 'user2']);
+        expect(loaded.recipients_who_accepted).toEqual([]);
     });
 
     test('Accept group invitation others pending', async () => {
@@ -87,16 +104,16 @@ invitees = User.objects.exclude(pk=invitor.pk)
 
 invitation = GroupInvitation.objects.validate_and_create(
     project=Project.objects.get(pk=${project.pk}),
-    invitation_creator=invitor,
-    invited_users=invitees
+    sender=invitor,
+    recipients=invitees
 )
 
 print(invitation.pk)
         `;
         let result = run_in_django_shell(make_invitation);
         let invitation = await GroupInvitation.get_by_pk(parseInt(result.stdout, 10));
-        expect(invitation.invitees_who_accepted).toEqual([]);
-        expect(invitation.invited_usernames).toContain(SUPERUSER_NAME);
+        expect(invitation.recipients_who_accepted).toEqual([]);
+        expect(invitation.recipient_usernames).toContain(SUPERUSER_NAME);
 
         let observer = new TestGroupObserver();
         Group.subscribe(observer);
@@ -104,7 +121,7 @@ print(invitation.pk)
         expect(new_group).toBeNull();
 
         expect(observer.group_created).toBeNull();
-        expect(invitation.invitees_who_accepted).toEqual([SUPERUSER_NAME]);
+        expect(invitation.recipients_who_accepted).toEqual([SUPERUSER_NAME]);
     });
 
     test('Accept group invitation group created', async () => {
@@ -117,16 +134,16 @@ invitee = User.objects.get(username='${SUPERUSER_NAME}')
 
 invitation = GroupInvitation.objects.validate_and_create(
     project=Project.objects.get(pk=${project.pk}),
-    invitation_creator=invitor,
-    invited_users=[invitee]
+    sender=invitor,
+    recipients=[invitee]
 )
 
 print(invitation.pk)
         `;
         let result = run_in_django_shell(make_invitation);
         let invitation = await GroupInvitation.get_by_pk(parseInt(result.stdout, 10));
-        expect(invitation.invitees_who_accepted).toEqual([]);
-        expect(invitation.invited_usernames).toEqual([SUPERUSER_NAME]);
+        expect(invitation.recipients_who_accepted).toEqual([]);
+        expect(invitation.recipient_usernames).toEqual([SUPERUSER_NAME]);
 
         let observer = new TestGroupObserver();
         Group.subscribe(observer);
@@ -146,13 +163,13 @@ from autograder.core.models import GroupInvitation
 invitation = GroupInvitation.objects.get(pk=${invitation.pk})
 accepter = User.objects.get(username='user1')
 
-invitation.invitee_accept(accepter)
+invitation.recipient_accept(accepter)
         `;
         run_in_django_shell(user_accept);
 
-        expect(invitation.invitees_who_accepted).toEqual([]);
+        expect(invitation.recipients_who_accepted).toEqual([]);
         await invitation.refresh();
-        expect(invitation.invitees_who_accepted).toEqual(['user1']);
+        expect(invitation.recipients_who_accepted).toEqual(['user1']);
     });
 
     test('Reject invitation', async () => {
@@ -165,16 +182,16 @@ invitees = User.objects.exclude(pk=invitor.pk)
 
 invitation = GroupInvitation.objects.validate_and_create(
     project=Project.objects.get(pk=${project.pk}),
-    invitation_creator=invitor,
-    invited_users=invitees
+    sender=invitor,
+    recipients=invitees
 )
 
 print(invitation.pk)
         `;
         let result = run_in_django_shell(make_invitation);
         let invitation = await GroupInvitation.get_by_pk(parseInt(result.stdout, 10));
-        expect(invitation.invitees_who_accepted).toEqual([]);
-        expect(invitation.invited_usernames).toContain(SUPERUSER_NAME);
+        expect(invitation.recipients_who_accepted).toEqual([]);
+        expect(invitation.recipient_usernames).toContain(SUPERUSER_NAME);
 
         await invitation.reject();
 

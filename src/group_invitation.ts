@@ -1,29 +1,35 @@
 import { ID, Refreshable } from "./base";
 import { Group, GroupData } from "./group";
 import { HttpClient } from "./http_client";
+import { User } from './user';
 import { safe_assign } from "./utils";
 
 export class GroupInvitationData {
     pk: ID;
-    invitation_creator: string;
     project: ID;
-    invited_usernames: string[];
-    invitees_who_accepted: string[];
+    readonly sender: Readonly<User>;
+    readonly recipients: Readonly<Readonly<User>[]>;
+    sender_username: string;
+    recipient_usernames: string[];
+    recipients_who_accepted: string[];
 
     constructor(args: GroupInvitationData) {
         this.pk = args.pk;
-        this.invitation_creator = args.invitation_creator;
         this.project = args.project;
-        this.invited_usernames = args.invited_usernames;
-        this.invitees_who_accepted = args.invitees_who_accepted;
+        this.sender = args.sender;
+        this.recipients = args.recipients;
+        this.sender_username = args.sender_username;
+        this.recipient_usernames = args.recipient_usernames;
+        this.recipients_who_accepted = args.recipients_who_accepted;
     }
 }
 
 export class GroupInvitation extends GroupInvitationData implements Refreshable {
     static async send_invitation(project_pk: ID,
-                                 invited_usernames: string[]): Promise<GroupInvitation> {
+                                 recipient_usernames: string[]): Promise<GroupInvitation> {
         let response = await HttpClient.get_instance().post<GroupInvitationData>(
-            `/projects/${project_pk}/group_invitations/`, {invited_usernames: invited_usernames});
+            `/projects/${project_pk}/group_invitations/`,
+            {recipient_usernames: recipient_usernames});
         return new GroupInvitation(response.data);
     }
 

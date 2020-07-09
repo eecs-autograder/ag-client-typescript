@@ -8,13 +8,12 @@ import {
 
     Course,
     ExpectedStudentFile,
-    InstructorFile, NewAGTestSuiteData,
+    InstructorFile,
+    NewAGTestSuiteData,
     Project,
-
-    SandboxDockerImageData
+    SandboxDockerImage,
+    SandboxDockerImageData,
 } from "..";
-import { get_sandbox_docker_images } from "../src/ag_test_suite";
-import { filter_keys } from "../src/utils";
 
 import {
     get_expected_editable_fields,
@@ -32,53 +31,6 @@ beforeAll(() => {
 beforeEach(() => {
     reset_db();
     make_superuser();
-});
-
-test('Get sandbox docker images', async () => {
-    let make_images = `
-from autograder.core.models import SandboxDockerImage
-
-SandboxDockerImage.objects.validate_and_create(
-    name='image1',
-    tag='image1:1',
-    display_name='Image 1',
-)
-
-SandboxDockerImage.objects.validate_and_create(
-    name='image2',
-    tag='image2:1',
-    display_name='Image 2',
-)
-
-SandboxDockerImage.objects.validate_and_create(
-    name='image3',
-    tag='image3:1',
-    display_name='Image 3',
-)
-    `;
-    run_in_django_shell(make_images);
-
-    let expected = [
-        {
-            name: 'image1',
-            tag: 'image1:1',
-            display_name: 'Image 1',
-        },
-        {
-            name: 'image2',
-            tag: 'image2:1',
-            display_name: 'Image 2',
-        },
-        {
-            name: 'image3',
-            tag: 'image3:1',
-            display_name: 'Image 3',
-        }
-    ];
-
-    let images = (await get_sandbox_docker_images()).filter(image => image.name !== 'default');
-    let actual = images.map((image) => filter_keys(image, ['name', 'tag', 'display_name']));
-    expect(actual).toEqual(expected);
 });
 
 describe('AGTestSuite ctor tests', () => {
@@ -100,9 +52,9 @@ describe('AGTestSuite ctor tests', () => {
 
     let sandbox_image: SandboxDockerImageData = {
         pk: 1,
-        name: 'image',
-        tag: 'jameslp/wee',
-        display_name: 'Image'
+        display_name: 'Image',
+        course: null,
+        last_modified: (new Date()).toISOString()
     };
 
     test('Construct AGTestSuite', () => {
@@ -331,12 +283,7 @@ image = SandboxDockerImage.objects.validate_and_create(
 print(image.pk)
         `;
         let result = run_in_django_shell(make_sandbox_image);
-        let image = {
-            pk: parseInt(result.stdout, 10),
-            tag: 'jameslp/custom',
-            name: 'custom',
-            display_name: 'Custom'
-        };
+        let image = await SandboxDockerImage.get_by_pk(parseInt(result.stdout, 10));
 
         let normal_fdbk = make_random_feedback_config();
         let ultimate_submission_fdbk = make_random_feedback_config();

@@ -3,20 +3,9 @@ import { Deletable, ID, SaveableAPIObject } from './base';
 import { ExpectedStudentFile, ExpectedStudentFileData } from './expected_student_file';
 import { HttpClient } from "./http_client";
 import { InstructorFile, InstructorFileData } from './instructor_file';
+import { SandboxDockerImageData } from './sandbox_docker_image';
 import { filter_keys, safe_assign } from "./utils";
 
-export interface SandboxDockerImageData {
-    pk: ID;
-    name: string;
-    tag: string;
-    display_name: string;
-}
-
-export async function get_sandbox_docker_images(): Promise<SandboxDockerImageData[]> {
-    let response
-        = await HttpClient.get_instance().get<SandboxDockerImageData[]>('/sandbox_docker_images/');
-    return response.data;
-}
 
 export class AGTestSuiteCoreData {
     pk: ID;

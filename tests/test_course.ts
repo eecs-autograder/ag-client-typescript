@@ -8,8 +8,6 @@ import {
     run_in_django_shell,
     sleep,
     SUPERUSER_NAME,
-    timeit,
-    timeit_async
 } from './utils';
 
 beforeAll(() => {
@@ -90,7 +88,7 @@ Course.objects.validate_and_create(name='EECS 280', semester=Semester.summer, ye
     });
 });
 
-describe('List/create/save Course tests', () => {
+describe('List/create/save/delete Course tests', () => {
     beforeEach(() => {
         reset_db();
         make_superuser();
@@ -290,6 +288,13 @@ course.save()
         expect(course.num_late_days).toEqual(3);
 
         expect_dates_not_equal(course.last_modified, old_timestamp);
+    });
+
+    test('Delete course', async () => {
+        let course = await Course.create({name: 'EECS 222'});
+        await course.delete();
+        await course.refresh();
+        expect(course.name).toContain('DELETED');
     });
 
     test('Copy course', async () => {

@@ -56,7 +56,6 @@ describe('Submission ctor tests', () => {
 
             status: GradingStatus.being_graded,
 
-            count_towards_daily_limit: false,
             is_past_daily_limit: false,
             is_bonus_submission: true,
             count_towards_total_limit: true,
@@ -80,7 +79,6 @@ describe('Submission ctor tests', () => {
 
         expect(submission.status).toEqual(GradingStatus.being_graded);
 
-        expect(submission.count_towards_daily_limit).toEqual(false);
         expect(submission.is_past_daily_limit).toEqual(false);
         expect(submission.is_bonus_submission).toEqual(true);
         expect(submission.count_towards_total_limit).toEqual(true);
@@ -169,16 +167,11 @@ describe('Submission detail endpoint tests', () => {
     });
 
     test('Admin edit submission', async () => {
-        expect(submission.count_towards_daily_limit).toEqual(true);
         expect(submission.count_towards_total_limit).toEqual(true);
-
-        submission.count_towards_daily_limit = false;
         submission.count_towards_total_limit = false;
-
         await submission.save();
 
         let loaded = await Submission.get_by_pk(submission.pk);
-        expect(loaded.count_towards_daily_limit).toEqual(false);
         expect(loaded.count_towards_total_limit).toEqual(false);
 
         expect(observer.submission).toEqual(submission);
@@ -372,7 +365,7 @@ for i in range(3):
             expect(submission.results.total_points).not.toEqual(0);
             expect(submission.results.total_points_possible).not.toEqual(0);
             expect(submission.results.ag_test_suite_results.length).toEqual(1);
-            expect(submission.results.student_test_suite_results).toEqual([]);
+            expect(submission.results.mutation_test_suite_results).toEqual([]);
         }
 
         // Override feedback
@@ -384,7 +377,7 @@ for i in range(3):
             expect(submission.results.total_points).toEqual(0);
             expect(submission.results.total_points_possible).toEqual(0);
             expect(submission.results.ag_test_suite_results.length).toEqual(1);
-            expect(submission.results.student_test_suite_results).toEqual([]);
+            expect(submission.results.mutation_test_suite_results).toEqual([]);
         }
     });
 });

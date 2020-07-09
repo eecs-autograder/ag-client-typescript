@@ -10,20 +10,17 @@ export class UserData {
     username: string;
     first_name: string;
     last_name: string;
-    email: string;
     is_superuser: boolean;
 
     constructor({pk,
                  username,
                  first_name,
                  last_name,
-                 email,
                  is_superuser}: UserData) {
         this.pk = pk;
         this.username = username;
         this.first_name = first_name;
         this.last_name = last_name;
-        this.email = email;
         this.is_superuser = is_superuser;
     }
 }

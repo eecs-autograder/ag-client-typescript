@@ -1,7 +1,8 @@
 import {
     Course,
     Group, GroupObserver, NewGroupData,
-    Project
+    Project,
+    User
 } from '..';
 
 import {
@@ -69,11 +70,26 @@ afterEach(() => {
 describe('List/create group tests', () => {
     test('Group ctor', () => {
         let now = (new Date()).toISOString();
+
+        let members = [
+            new User({
+                pk: 2, username: 'john@umich.edu',
+                first_name: 'joHn', last_name: 'umich',
+                is_superuser: false
+            }),
+            new User({
+                pk: 1, username: 'doe@umich.edu',
+                first_name: 'doe', last_name: 'edu',
+                is_superuser: true
+            }),
+        ];
+
         let group = new Group({
             pk: 6,
             project: project.pk,
             extended_due_date: now,
-            member_names: ['john@umich.edu', 'doe@umich.edu'],
+            members: members,
+            member_names: members.map(member => member.username),
             bonus_submissions_remaining: 0,
             late_days_used: {'john@umich.edu': 0, 'doe@umich.edu': 0},
             num_submissions: 1,
@@ -85,6 +101,7 @@ describe('List/create group tests', () => {
         expect(group.pk).toEqual(6);
         expect(group.project).toEqual(project.pk);
         expect(group.extended_due_date).toEqual(now);
+        expect(group.members).toEqual(members);
         expect(group.member_names).toEqual(['john@umich.edu', 'doe@umich.edu']);
         expect(group.bonus_submissions_remaining).toEqual(0);
         expect(group.late_days_used).toEqual({'john@umich.edu': 0, 'doe@umich.edu': 0});
@@ -293,54 +310,5 @@ group.validate_and_update(bonus_submissions_remaining=12)
         expect(observer.created_count).toEqual(1);
         expect(observer.changed_count).toEqual(1);
         expect(observer.merged_count).toEqual(0);
-    });
-
-    test('Edit bonus submissions', async () => {
-        project.num_bonus_submissions = 2;
-        await project.save();
-
-        let group1 = await Group.create(project.pk, new NewGroupData({
-            member_names: ['member1@umich.edu']
-        }));
-
-        let group2 = await Group.create(project.pk, new NewGroupData({
-            member_names: ['member2@umich.edu']
-        }));
-
-        expect(group1.bonus_submissions_remaining).toEqual(2);
-        expect(group2.bonus_submissions_remaining).toEqual(2);
-
-        // Add/subtract from all
-
-        await Group.add_bonus_submissions(project.pk, 1);
-        await group1.refresh();
-        await group2.refresh();
-
-        expect(group1.bonus_submissions_remaining).toEqual(3);
-        expect(group2.bonus_submissions_remaining).toEqual(3);
-
-        await Group.subtract_bonus_submissions(project.pk, 2);
-        await group1.refresh();
-        await group2.refresh();
-
-        expect(group1.bonus_submissions_remaining).toEqual(1);
-        expect(group2.bonus_submissions_remaining).toEqual(1);
-
-        // Add/subtract from one
-
-        await Group.add_bonus_submissions(project.pk, 4, group2.pk);
-        await group1.refresh();
-        await group2.refresh();
-
-        expect(group1.bonus_submissions_remaining).toEqual(1);
-        expect(group2.bonus_submissions_remaining).toEqual(5);
-
-        await Group.subtract_bonus_submissions(project.pk, 1, group1.pk);
-
-        await group1.refresh();
-        await group2.refresh();
-
-        expect(group1.bonus_submissions_remaining).toEqual(0);
-        expect(group2.bonus_submissions_remaining).toEqual(5);
     });
 });

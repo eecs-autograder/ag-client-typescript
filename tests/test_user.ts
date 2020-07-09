@@ -18,14 +18,12 @@ describe('User tests', () => {
             username: 'batman',
             first_name: 'The',
             last_name: 'Batman',
-            email: 'batman@umich.edu',
             is_superuser: true
         });
         expect(user.pk).toEqual(42);
         expect(user.username).toEqual('batman');
         expect(user.first_name).toEqual('The');
         expect(user.last_name).toEqual('Batman');
-        expect(user.email).toEqual('batman@umich.edu');
         expect(user.is_superuser).toEqual(true);
     });
 
@@ -36,7 +34,6 @@ describe('User tests', () => {
         expect(current_user.username).toEqual(SUPERUSER_NAME);
         expect(current_user.first_name).toEqual('');
         expect(current_user.last_name).toEqual('');
-        expect(current_user.email).toEqual('');
         expect(current_user.is_superuser).toEqual(false);
 
         let set_superuser = `
@@ -48,7 +45,6 @@ User.objects.filter(pk=${current_user.pk}).update(is_superuser=True)`;
         expect(current_user.username).toEqual(SUPERUSER_NAME);
         expect(current_user.first_name).toEqual('');
         expect(current_user.last_name).toEqual('');
-        expect(current_user.email).toEqual('');
         expect(current_user.is_superuser).toEqual(true);
     });
 
@@ -80,7 +76,6 @@ User.objects.filter(pk=${current_user.pk}).update(is_superuser=True)`;
         expect(user.username).toEqual(SUPERUSER_NAME);
         expect(user.first_name).toEqual('');
         expect(user.last_name).toEqual('');
-        expect(user.email).toEqual('');
         expect(user.is_superuser).toEqual(false);
 
         let set_fields = `
@@ -88,15 +83,13 @@ from django.contrib.auth.models import User
 User.objects.filter(pk=${user.pk}).update(
     is_superuser=True,
     first_name='James',
-    last_name='Perretta',
-    email='${SUPERUSER_NAME}')`;
+    last_name='Perretta')`;
         run_in_django_shell(set_fields);
 
         await user.refresh();
         expect(user.username).toEqual(SUPERUSER_NAME);
         expect(user.first_name).toEqual('James');
         expect(user.last_name).toEqual('Perretta');
-        expect(user.email).toEqual(SUPERUSER_NAME);
         expect(user.is_superuser).toEqual(true);
     });
 
@@ -346,8 +339,8 @@ invitee = User.objects.get(username='${SUPERUSER_NAME}')
 
 invitation = GroupInvitation.objects.validate_and_create(
     project=Project.objects.get(pk=${project.pk}),
-    invitation_creator=invitor,
-    invited_users=[invitee]
+    sender=invitor,
+    recipients=[invitee]
 )
 
 print(invitation.pk)

@@ -1,11 +1,13 @@
 import { ID, SaveableAPIObject } from "./base";
 import { HttpClient, HttpResponse } from './http_client';
+import { User } from './user';
 import { filter_keys, safe_assign } from './utils';
 
 export class GroupData {
     pk: number;
     project: number;
     extended_due_date: string | null;
+    readonly members: Readonly<Readonly<User>[]>;
     member_names: string[];
     bonus_submissions_remaining: number;
     late_days_used: {[username: string]: number};
@@ -18,6 +20,7 @@ export class GroupData {
         pk,
         project,
         extended_due_date,
+        members,
         member_names,
         bonus_submissions_remaining,
         late_days_used,
@@ -29,6 +32,7 @@ export class GroupData {
         this.pk = pk;
         this.project = project;
         this.extended_due_date = extended_due_date;
+        this.members = members;
         this.member_names = member_names;
         this.bonus_submissions_remaining = bonus_submissions_remaining;
         this.late_days_used = late_days_used;
@@ -99,7 +103,7 @@ export class Group extends GroupData implements SaveableAPIObject {
 
     async merge_groups(other_group_pk: number): Promise<Group> {
         let response = await HttpClient.get_instance().post<GroupData>(
-            `/groups/${this.pk}/merge_with/?other_group_pk=${other_group_pk}`
+            `/groups/${this.pk}/merge_with/${other_group_pk}/`
         );
 
         let result = new Group(response.data);
@@ -119,34 +123,6 @@ export class Group extends GroupData implements SaveableAPIObject {
     async pseudo_delete() {
         await HttpClient.get_instance().delete(`/groups/${this.pk}/`);
         return this.refresh();
-    }
-
-    // When group_pk is not provided, this method will add
-    // bonus submissions to all groups in the project.
-    // If provided, this method will only modify the number of
-    // bonus submissions for that group.
-    static add_bonus_submissions(
-        project_pk: ID, num_to_add: number, group_pk?: ID
-    ): Promise<HttpResponse> {
-        let url = `/projects/${project_pk}/groups/bonus_submissions/`;
-        if (group_pk !== undefined) {
-            url += `?group_pk=${group_pk}`;
-        }
-        return HttpClient.get_instance().patch(url, {add: num_to_add});
-    }
-
-    // When group_pk is not provided, this method will subtract
-    // bonus submissions from all groups in the project.
-    // If provided, this method will only modify the number of
-    // bonus submissions for that group.
-    static subtract_bonus_submissions(
-        project_pk: ID, num_to_subtract: number, group_pk?: ID
-    ): Promise<HttpResponse> {
-        let url = `/projects/${project_pk}/groups/bonus_submissions/`;
-        if (group_pk !== undefined) {
-            url += `?group_pk=${group_pk}`;
-        }
-        return HttpClient.get_instance().patch(url, {subtract: num_to_subtract});
     }
 
     async save(): Promise<void> {

@@ -1,18 +1,18 @@
 import {
+    AGCommand,
     BugsExposedFeedbackLevel,
     Course,
     ExpectedStudentFile,
+    ID,
     InstructorFile,
     MutationTestSuite,
-    Project,
-    SandboxDockerImageData
-} from "..";
-import { ID } from "../src/base";
-import {
     MutationTestSuiteFeedbackConfig,
     MutationTestSuiteObserver,
-    NewMutationTestSuiteData
-} from "../src/mutation_test_suite";
+    NewMutationTestSuiteData,
+    Project,
+    SandboxDockerImage,
+    SandboxDockerImageData,
+} from "..";
 
 import {
     get_expected_editable_fields,
@@ -26,37 +26,45 @@ beforeAll(() => {
     global_setup();
 });
 
-let setup_command = {
+let setup_command: AGCommand = {
     name: "",
     cmd: 'seeetup',
     time_limit: 9,
     stack_size_limit: 40040,
+    use_virtual_memory_limit: true,
     virtual_memory_limit: 100000008,
     process_spawn_limit: 7,
+    block_process_spawn: false,
 };
 let get_student_test_names_command = {
     name: "",
     cmd: 'ls test*',
     time_limit: 10,
     stack_size_limit: 42000,
+    use_virtual_memory_limit: true,
     virtual_memory_limit: 100090000,
     process_spawn_limit: 2,
+    block_process_spawn: true,
 };
 let student_test_validity_check_command = {
     name: "",
     cmd: 'valid.sh ${student_test_name}',
     time_limit: 11,
     stack_size_limit: 40010,
+    use_virtual_memory_limit: true,
     virtual_memory_limit: 100100000,
     process_spawn_limit: 6,
+    block_process_spawn: true,
 };
 let grade_buggy_impl_command = {
     name: "",
     cmd: 'grade.py ${student_test_name} ${buggy_impl_name}',
     time_limit: 8,
     stack_size_limit: 50000,
+    use_virtual_memory_limit: true,
     virtual_memory_limit: 200000000,
     process_spawn_limit: 3,
+    block_process_spawn: false,
 };
 
 describe('MutationTestSuite ctor tests', () => {
@@ -103,9 +111,9 @@ describe('MutationTestSuite ctor tests', () => {
 
         let sandbox_image: SandboxDockerImageData = {
             pk: 1,
-            name: 'image',
-            tag: 'jameslp/wee',
-            display_name: 'Image'
+            display_name: 'Image',
+            last_modified: (new Date()).toISOString(),
+            course: null
         };
 
         let normal_fdbk = make_random_fdbk_config();
@@ -252,9 +260,9 @@ describe('MutationTestSuite API tests', () => {
         project = await Project.create(course.pk, {name: 'Projy'});
 
         let make_suites = `
-from autograder.core.models import StudentTestSuite
-StudentTestSuite.objects.validate_and_create(project=${project.pk}, name='MutationSuite1')
-StudentTestSuite.objects.validate_and_create(project=${project.pk}, name='MutationSuite2')
+from autograder.core.models import MutationTestSuite
+MutationTestSuite.objects.validate_and_create(project=${project.pk}, name='MutationSuite1')
+MutationTestSuite.objects.validate_and_create(project=${project.pk}, name='MutationSuite2')
         `;
         run_in_django_shell(make_suites);
 
@@ -270,8 +278,8 @@ StudentTestSuite.objects.validate_and_create(project=${project.pk}, name='Mutati
 
     test('Get MutationTestSuites from project none exist', async () => {
         let delete_suites = `
-from autograder.core.models import StudentTestSuite
-StudentTestSuite.objects.all().delete()
+from autograder.core.models import MutationTestSuite
+MutationTestSuite.objects.all().delete()
         `;
         run_in_django_shell(delete_suites);
 
@@ -297,12 +305,7 @@ image = SandboxDockerImage.objects.validate_and_create(
 print(image.pk)
         `;
         let result = run_in_django_shell(make_sandbox_image);
-        let image = {
-            pk: parseInt(result.stdout, 10),
-            tag: 'jameslp/custom',
-            name: 'custom',
-            display_name: 'Custom'
-        };
+        let image = await SandboxDockerImage.get_by_pk(parseInt(result.stdout, 10));
 
         let normal_fdbk = make_random_fdbk_config();
         let ultimate_submission_fdbk = make_random_fdbk_config();
@@ -403,7 +406,7 @@ print(image.pk)
     });
 
     test('Check editable flields', async () => {
-        let expected = get_expected_editable_fields('StudentTestSuite');
+        let expected = get_expected_editable_fields('MutationTestSuite');
         expected =  expected.filter((value) => value !== 'docker_image_to_use');
         expected.sort();
 
@@ -419,8 +422,8 @@ print(image.pk)
         await sleep(1);
 
         let rename_suite = `
-from autograder.core.models import StudentTestSuite
-StudentTestSuite.objects.get(pk=${suite.pk}).validate_and_update(name='Renamed')
+from autograder.core.models import MutationTestSuite
+MutationTestSuite.objects.get(pk=${suite.pk}).validate_and_update(name='Renamed')
         `;
         run_in_django_shell(rename_suite);
 

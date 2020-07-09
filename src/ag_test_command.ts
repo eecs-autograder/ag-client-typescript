@@ -48,9 +48,9 @@ export class AGTestCommandData {
     staff_viewer_fdbk_config: AGTestCommandFeedbackConfig;
 
     time_limit: number;
-    stack_size_limit: number;
+    use_virtual_memory_limit: boolean;
     virtual_memory_limit: number;
-    process_spawn_limit: number;
+    block_process_spawn: boolean;
 
     constructor(args: AGTestCommandData) {
         this.pk = args.pk;
@@ -91,9 +91,9 @@ export class AGTestCommandData {
         this.staff_viewer_fdbk_config = args.staff_viewer_fdbk_config;
 
         this.time_limit = args.time_limit;
-        this.stack_size_limit = args.stack_size_limit;
+        this.use_virtual_memory_limit = args.use_virtual_memory_limit;
         this.virtual_memory_limit = args.virtual_memory_limit;
-        this.process_spawn_limit = args.process_spawn_limit;
+        this.block_process_spawn = args.block_process_spawn;
     }
 }
 
@@ -238,9 +238,9 @@ export class AGTestCommand extends AGTestCommandData implements SaveableAPIObjec
         'staff_viewer_fdbk_config',
 
         'time_limit',
-        'stack_size_limit',
+        'use_virtual_memory_limit',
         'virtual_memory_limit',
-        'process_spawn_limit',
+        'block_process_spawn',
     ];
 }
 
@@ -284,9 +284,9 @@ export class NewAGTestCommandData {
     staff_viewer_fdbk_config?: AGTestCommandFeedbackConfig;
 
     time_limit?: number;
-    stack_size_limit?: number;
+    use_virtual_memory_limit?: boolean;
     virtual_memory_limit?: number;
-    process_spawn_limit?: number;
+    block_process_spawn?: boolean;
 
     constructor(args: NewAGTestCommandData) {
         this.name = args.name;
@@ -323,9 +323,9 @@ export class NewAGTestCommandData {
         this.staff_viewer_fdbk_config = args.staff_viewer_fdbk_config;
 
         this.time_limit = args.time_limit;
-        this.stack_size_limit = args.stack_size_limit;
+        this.use_virtual_memory_limit = args.use_virtual_memory_limit;
         this.virtual_memory_limit = args.virtual_memory_limit;
-        this.process_spawn_limit = args.process_spawn_limit;
+        this.block_process_spawn = args.block_process_spawn;
     }
 }
 

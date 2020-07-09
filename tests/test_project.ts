@@ -1,5 +1,8 @@
 import {
-    Course, ExpectedStudentFile, InstructorFile,
+    Course,
+    ExpectedStudentFile,
+    HttpError,
+    InstructorFile,
     NewProjectData,
     Project,
     ProjectObserver,
@@ -337,6 +340,22 @@ project.validate_and_update(name='projy')
 
         expect(observer.project).toEqual(project);
         expect(observer.changed_count).toEqual(1);
+    });
+
+    test('Delete project', async () => {
+        let project = await Project.create(course.pk, {name: 'project'});
+        await project.delete();
+
+        try {
+            await project.refresh();
+            fail('exception not thrown');
+        }
+        catch (e) {
+            if (!(e instanceof HttpError)) {
+                throw e;
+            }
+            expect(e.status).toEqual(404);
+        }
     });
 
     test('Copy project to same course', async () => {

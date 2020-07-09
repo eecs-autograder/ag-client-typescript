@@ -1,6 +1,6 @@
 import { SaveableAPIObject } from "./base";
 import { ExpectedStudentFile, ExpectedStudentFileData } from './expected_student_file';
-import { HttpClient } from "./http_client";
+import { HttpClient, HttpResponse } from "./http_client";
 import { InstructorFile, InstructorFileData } from './instructor_file';
 import { filter_keys, safe_assign, sort_by_name } from "./utils";
 
@@ -163,6 +163,10 @@ export class Project extends ProjectCoreData implements SaveableAPIObject {
         }
     }
 
+    delete(): Promise<HttpResponse> {
+        return HttpClient.get_instance().delete(`/projects/${this.pk}/`);
+    }
+
     static notify_project_changed(project: Project) {
         for (let subscriber of Project._subscribers) {
             subscriber.update_project_changed(project);
@@ -205,7 +209,8 @@ export class Project extends ProjectCoreData implements SaveableAPIObject {
 
     async copy_to_course(course_pk: number, new_name: string): Promise<Project> {
         let response = await HttpClient.get_instance().post<ProjectData>(
-            `/projects/${this.pk}/copy_to_course/${course_pk}/?new_project_name=${new_name}`
+            `/projects/${this.pk}/copy_to_course/${course_pk}/`,
+            {new_project_name: new_name}
         );
         let new_project = new Project(response.data);
         Project.notify_project_created(new_project);

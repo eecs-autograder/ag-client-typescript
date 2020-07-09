@@ -34,8 +34,8 @@ test('Task ctor', () => {
         submission_pks: [],
         rerun_all_ag_test_suites: false,
         ag_test_suite_data: {8: [1]},
-        rerun_all_student_test_suites: true,
-        student_suite_pks: [5, 8, 9],
+        rerun_all_mutation_test_suites: true,
+        mutation_suite_pks: [5, 8, 9],
     });
 
     expect(task.pk).toEqual(4);
@@ -52,8 +52,8 @@ test('Task ctor', () => {
     expect(task.submission_pks).toEqual([]);
     expect(task.rerun_all_ag_test_suites).toBe(false);
     expect(task.ag_test_suite_data).toEqual({8: [1]});
-    expect(task.rerun_all_student_test_suites).toBe(true);
-    expect(task.student_suite_pks).toEqual([5, 8, 9]);
+    expect(task.rerun_all_mutation_test_suites).toBe(true);
+    expect(task.mutation_suite_pks).toEqual([5, 8, 9]);
 });
 
 test('NewRerunSubmissionTaskData ctor', () => {
@@ -64,8 +64,8 @@ test('NewRerunSubmissionTaskData ctor', () => {
         rerun_all_ag_test_suites: false,
         ag_test_suite_data: {42: [3, 4]},
 
-        rerun_all_student_test_suites: false,
-        student_suite_pks: [6, 8],
+        rerun_all_mutation_test_suites: false,
+        mutation_suite_pks: [6, 8],
     });
 
     expect(data.rerun_all_submissions).toBe(true);
@@ -74,8 +74,8 @@ test('NewRerunSubmissionTaskData ctor', () => {
     expect(data.rerun_all_ag_test_suites).toBe(false);
     expect(data.ag_test_suite_data).toEqual({42: [3, 4]});
 
-    expect(data.rerun_all_student_test_suites).toBe(false);
-    expect(data.student_suite_pks).toEqual([6, 8]);
+    expect(data.rerun_all_mutation_test_suites).toBe(false);
+    expect(data.mutation_suite_pks).toEqual([6, 8]);
 });
 
 test('Create and get task', async () => {
@@ -84,16 +84,16 @@ test('Create and get task', async () => {
         submission_pks: [],
         rerun_all_ag_test_suites: false,
         ag_test_suite_data: {},
-        rerun_all_student_test_suites: false,
-        student_suite_pks: [],
+        rerun_all_mutation_test_suites: false,
+        mutation_suite_pks: [],
     });
 
     expect(task.rerun_all_submissions).toBe(false);
     expect(task.submission_pks).toEqual([]);
     expect(task.rerun_all_ag_test_suites).toBe(false);
     expect(task.ag_test_suite_data).toEqual({});
-    expect(task.rerun_all_student_test_suites).toBe(false);
-    expect(task.student_suite_pks).toEqual([]);
+    expect(task.rerun_all_mutation_test_suites).toBe(false);
+    expect(task.mutation_suite_pks).toEqual([]);
 
     expect(task.project).toEqual(project.pk);
     expect(task.progress).toEqual(100);
@@ -110,8 +110,8 @@ test('Cancel task', async () => {
         submission_pks: [],
         rerun_all_ag_test_suites: false,
         ag_test_suite_data: {},
-        rerun_all_student_test_suites: false,
-        student_suite_pks: [],
+        rerun_all_mutation_test_suites: false,
+        mutation_suite_pks: [],
     });
     expect(task.is_cancelled).toBe(false);
 
@@ -125,7 +125,7 @@ test('Get all from project', async () => {
     let task_2 = await RerunSubmissionTask.create(project.pk, {
         rerun_all_submissions: true,
         rerun_all_ag_test_suites: true,
-        rerun_all_student_test_suites: true,
+        rerun_all_mutation_test_suites: true,
     });
 
     let loaded = await RerunSubmissionTask.get_all_from_project(project.pk);

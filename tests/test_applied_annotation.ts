@@ -109,7 +109,7 @@ describe('List/create applied annotation result tests', () => {
     test('List applied annotation result', async () => {
         let create_applied_annotation = `
 from autograder.handgrading.models import (
-    HandgradingResult, AppliedAnnotation, Annotation, HandgradingRubric, Location
+    HandgradingResult, AppliedAnnotation, Annotation, HandgradingRubric
 )
 rubric = HandgradingRubric.objects.get(pk=${handgrading_rubric.pk})
 result = HandgradingResult.objects.get(pk=${handgrading_result.pk})

@@ -1,5 +1,7 @@
 export { HttpClient, HttpError, HttpResponse } from './src/http_client';
 
+export { ID } from './src/base';
+
 export { AllCourses, Course, CourseObserver, NewCourseData, Semester } from './src/course';
 export { User, UserRoles } from './src/user';
 
@@ -18,6 +20,14 @@ export {
     SubmissionObserver,
     SubmissionWithResults
 } from './src/submission';
+
+export {
+    SandboxDockerImage,
+    SandboxDockerImageData,
+    BuildImageStatus,
+    BuildSandboxDockerImageTask,
+    BuildSandboxDockerImageTaskData,
+} from './src/sandbox_docker_image';
 
 export { AGCommand } from './src/ag_command';
 export {
@@ -38,15 +48,11 @@ export {
     ExpectedReturnCode,
 } from './src/ag_test_command';
 export {
-    get_sandbox_docker_images,
-
     AGTestSuiteData,
     AGTestSuiteObserver,
     AGTestSuite,
     AGTestSuiteFeedbackConfig,
     NewAGTestSuiteData,
-
-    SandboxDockerImageData,
 } from './src/ag_test_suite';
 
 export {

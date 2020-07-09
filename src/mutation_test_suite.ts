@@ -1,9 +1,9 @@
 import { AGCommand } from "./ag_command";
-import { SandboxDockerImageData } from "./ag_test_suite";
 import { Deletable, ID, SaveableAPIObject } from "./base";
 import { ExpectedStudentFile, ExpectedStudentFileData } from "./expected_student_file";
 import { HttpClient } from "./http_client";
 import { InstructorFile, InstructorFileData } from "./instructor_file";
+import { SandboxDockerImageData } from "./sandbox_docker_image";
 import { filter_keys, safe_assign } from "./utils";
 
 export class MutationTestSuiteCoreData {
@@ -118,20 +118,20 @@ export class MutationTestSuite extends MutationTestSuiteCoreData implements Save
 
     static async get_all_from_project(project_pk: ID): Promise<MutationTestSuite[]> {
         let response = await HttpClient.get_instance().get<MutationTestSuiteData[]>(
-            `/projects/${project_pk}/student_test_suites/`);
+            `/projects/${project_pk}/mutation_test_suites/`);
         return response.data.map(suite_data => new MutationTestSuite(suite_data));
     }
 
     static async get_by_pk(mutation_test_suite_pk: ID): Promise<MutationTestSuite> {
         let response = await HttpClient.get_instance().get<MutationTestSuiteData>(
-            `/student_test_suites/${mutation_test_suite_pk}/`);
+            `/mutation_test_suites/${mutation_test_suite_pk}/`);
         return new MutationTestSuite(response.data);
     }
 
     static async create(project_pk: ID,
                         data: NewMutationTestSuiteData): Promise<MutationTestSuite> {
         let response = await HttpClient.get_instance().post<MutationTestSuiteData>(
-            `/projects/${project_pk}/student_test_suites/`, data);
+            `/projects/${project_pk}/mutation_test_suites/`, data);
         let result = new MutationTestSuite(response.data);
         MutationTestSuite.notify_mutation_test_suite_created(result);
         return result;
@@ -145,7 +145,7 @@ export class MutationTestSuite extends MutationTestSuiteCoreData implements Save
 
     async save(): Promise<void> {
         let response = await HttpClient.get_instance().patch<MutationTestSuiteData>(
-            `/student_test_suites/${this.pk}/`,
+            `/mutation_test_suites/${this.pk}/`,
             filter_keys(this, MutationTestSuite.EDITABLE_FIELDS));
         safe_assign(this, new MutationTestSuite(response.data));
         MutationTestSuite.notify_mutation_test_suite_changed(this);
@@ -169,7 +169,7 @@ export class MutationTestSuite extends MutationTestSuiteCoreData implements Save
     }
 
     async delete(): Promise<void> {
-        await HttpClient.get_instance().delete(`/student_test_suites/${this.pk}/`);
+        await HttpClient.get_instance().delete(`/mutation_test_suites/${this.pk}/`);
         MutationTestSuite.notify_mutation_test_suite_deleted(this);
     }
 
@@ -181,13 +181,13 @@ export class MutationTestSuite extends MutationTestSuiteCoreData implements Save
 
     static async get_order(project_pk: ID): Promise<ID[]> {
         let response = await HttpClient.get_instance().get<ID[]>(
-            `/projects/${project_pk}/student_test_suites/order/`);
+            `/projects/${project_pk}/mutation_test_suites/order/`);
         return response.data;
     }
 
     static async update_order(project_pk: ID, ag_test_suite_order: ID[]): Promise<ID[]> {
         let response = await HttpClient.get_instance().put<ID[]>(
-            `/projects/${project_pk}/student_test_suites/order/`, ag_test_suite_order);
+            `/projects/${project_pk}/mutation_test_suites/order/`, ag_test_suite_order);
 
         MutationTestSuite.notify_mutation_test_suite_order_updated(project_pk, response.data);
         return response.data;
@@ -257,7 +257,8 @@ export interface MutationTestSuiteFeedbackConfig {
 export enum BugsExposedFeedbackLevel {
     no_feedback = 'no_feedback',
     num_bugs_exposed = 'num_bugs_exposed',
-    exposed_bug_names = 'exposed_bug_names'
+    exposed_bug_names = 'exposed_bug_names',
+    all_bug_names = 'all_bug_names'
 }
 
 export class NewMutationTestSuiteData {

@@ -11,7 +11,9 @@ services:
       - "9000:9000"
     volumes:
       - ./autograder-server:/usr/src/app
-    command: python3 /usr/src/app/manage.py runserver 0.0.0.0:9000
+    command: >-
+      /usr/local/bin/uwsgi --module=autograder.wsgi:application
+                           --http=:9000 --master --processes=1 --vacuum --die-on-term
     env_file:
       - ./autograder-server/_dev.env
     environment:

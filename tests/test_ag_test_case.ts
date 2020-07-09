@@ -2,6 +2,7 @@ import {
     AGTestCase,
     AGTestCaseObserver,
     AGTestCommand,
+    AGTestCommandData,
     AGTestCommandObserver,
     AGTestSuite,
     Course,
@@ -42,7 +43,7 @@ describe('AGTestCase ctor tests', () => {
         };
 
         let now = (new Date()).toISOString();
-        let ag_test_commands = [
+        let ag_test_commands: AGTestCommandData[] = [
             // Should work with AGTestCommandData and AGTestCommand
             {
                 pk: 4,
@@ -88,9 +89,9 @@ describe('AGTestCase ctor tests', () => {
                 staff_viewer_fdbk_config: ag_test_commnad_fdbk,
 
                 time_limit: 10,
-                stack_size_limit: 10000,
-                virtual_memory_limit: 500000,
-                process_spawn_limit: 0,
+                use_virtual_memory_limit: false,
+                virtual_memory_limit: 10000,
+                block_process_spawn: true,
             },
             // Should work with AGTestCommandData and AGTestCommand
             new AGTestCommand({
@@ -106,7 +107,7 @@ describe('AGTestCase ctor tests', () => {
                 stdin_text: '',
                 stdin_instructor_file: null,
 
-                expected_return_code: ExpectedReturnCode.nonzero,
+                expected_return_code: ExpectedReturnCode.zero,
 
                 expected_stdout_source: ExpectedOutputSource.none,
                 expected_stdout_text: '',
@@ -121,14 +122,14 @@ describe('AGTestCase ctor tests', () => {
                 ignore_whitespace_changes: false,
                 ignore_blank_lines: true,
 
-                points_for_correct_return_code: 1,
+                points_for_correct_return_code: 3,
 
-                points_for_correct_stdout: 3,
-                points_for_correct_stderr: 2,
+                points_for_correct_stdout: 2,
+                points_for_correct_stderr: 1,
 
-                deduction_for_wrong_return_code: -1,
-                deduction_for_wrong_stdout: -3,
-                deduction_for_wrong_stderr: -2,
+                deduction_for_wrong_return_code: -6,
+                deduction_for_wrong_stdout: -4,
+                deduction_for_wrong_stderr: -5,
 
                 normal_fdbk_config: ag_test_commnad_fdbk,
                 first_failed_test_normal_fdbk_config: ag_test_commnad_fdbk,
@@ -137,9 +138,9 @@ describe('AGTestCase ctor tests', () => {
                 staff_viewer_fdbk_config: ag_test_commnad_fdbk,
 
                 time_limit: 10,
-                stack_size_limit: 10000,
+                use_virtual_memory_limit: true,
                 virtual_memory_limit: 500000,
-                process_spawn_limit: 0,
+                block_process_spawn: false,
             })
         ];
 
@@ -183,7 +184,7 @@ describe('AGTestCase ctor tests', () => {
         expect(ag_test_case.last_modified).toEqual(now);
 
         expect(ag_test_case.ag_test_commands).toEqual(
-            [new AGTestCommand(ag_test_commands[0]), ag_test_commands[0]]);
+            [new AGTestCommand(ag_test_commands[0]), ag_test_commands[1]]);
     });
 });
 

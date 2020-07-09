@@ -19,8 +19,8 @@ export class RerunSubmissionTaskData {
     rerun_all_ag_test_suites: boolean;
     ag_test_suite_data: {[key: number]: ID[]};
 
-    rerun_all_student_test_suites: boolean;
-    student_suite_pks: ID[];
+    rerun_all_mutation_test_suites: boolean;
+    mutation_suite_pks: ID[];
 
     constructor(args: RerunSubmissionTaskData) {
         this.pk = args.pk;
@@ -38,8 +38,8 @@ export class RerunSubmissionTaskData {
         this.rerun_all_ag_test_suites = args.rerun_all_ag_test_suites;
         this.ag_test_suite_data = args.ag_test_suite_data;
 
-        this.rerun_all_student_test_suites = args.rerun_all_student_test_suites;
-        this.student_suite_pks = args.student_suite_pks;
+        this.rerun_all_mutation_test_suites = args.rerun_all_mutation_test_suites;
+        this.mutation_suite_pks = args.mutation_suite_pks;
     }
 }
 
@@ -77,8 +77,8 @@ export class NewRerunSubmissionTaskData {
     rerun_all_ag_test_suites?: boolean;
     ag_test_suite_data?: {[key: number]: ID[]};
 
-    rerun_all_student_test_suites?: boolean;
-    student_suite_pks?: ID[];
+    rerun_all_mutation_test_suites?: boolean;
+    mutation_suite_pks?: ID[];
 
     constructor(args: NewRerunSubmissionTaskData) {
         this.rerun_all_submissions = args.rerun_all_submissions;
@@ -87,7 +87,7 @@ export class NewRerunSubmissionTaskData {
         this.rerun_all_ag_test_suites = args.rerun_all_ag_test_suites;
         this.ag_test_suite_data = args.ag_test_suite_data;
 
-        this.rerun_all_student_test_suites = args.rerun_all_student_test_suites;
-        this.student_suite_pks = args.student_suite_pks;
+        this.rerun_all_mutation_test_suites = args.rerun_all_mutation_test_suites;
+        this.mutation_suite_pks = args.mutation_suite_pks;
     }
 }

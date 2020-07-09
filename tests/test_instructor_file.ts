@@ -238,6 +238,7 @@ with file_.open('wb') as to_overwrite:
         let new_instructor_file = await InstructorFile.create(project.pk, 'An new file', response);
         let loaded = await new_instructor_file.get_content();
         await check_tar_file(response, ['tar_file1', 'tar_file2']);
+        await check_tar_file(loaded, ['tar_file1', 'tar_file2']);
     });
 
     test('Rename and refresh instructor file', async () => {

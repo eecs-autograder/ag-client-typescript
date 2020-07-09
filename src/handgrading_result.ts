@@ -138,7 +138,7 @@ export class HandgradingResult extends HandgradingResultCoreData implements Refr
         on_download_progress?: ProgressEventListener,
     ): Promise<string> {
         let response = await HttpClient.get_instance().get<string>(
-            `/groups/${group_pk}/handgrading_result/?filename=${file}`,
+            `/groups/${group_pk}/handgrading_result/file/?filename=${file}`,
             {on_download_progress: on_download_progress}
         );
 

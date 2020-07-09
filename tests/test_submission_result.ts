@@ -102,7 +102,9 @@ beforeAll(async () => {
             process_spawn_limit: 0,
             stack_size_limit: 10000,
             time_limit: 10,
-            virtual_memory_limit: 500000000
+            use_virtual_memory_limit: true,
+            virtual_memory_limit: 500000000,
+            block_process_spawn: true,
         },
 
         normal_fdbk_config: {
@@ -187,9 +189,9 @@ print(f'{case_result.pk} {cmd_result.pk}')
         = result.stdout.split(' ').map(id => parseInt(id, 10));
 
     let make_mutation_test_suite_result = `
-from autograder.core.models import StudentTestSuiteResult, AGCommandResult
-suite_result = StudentTestSuiteResult.objects.validate_and_create(
-    student_test_suite=${mutation_test_suite.pk},
+from autograder.core.models import MutationTestSuiteResult, AGCommandResult
+suite_result = MutationTestSuiteResult.objects.validate_and_create(
+    mutation_test_suite=${mutation_test_suite.pk},
     submission=${submission_pk},
 
     student_tests=['test1', 'test2', 'test3'],
@@ -291,11 +293,11 @@ describe('get_submission_result tests', () => {
                     }]
                 }]
             }],
-            student_test_suite_results: [
+            mutation_test_suite_results: [
                 {
                     pk: mutation_test_suite_result_pk,
-                    student_test_suite_name: 'Mutation test suite',
-                    student_test_suite_pk: mutation_test_suite.pk,
+                    mutation_test_suite_name: 'Mutation test suite',
+                    mutation_test_suite_pk: mutation_test_suite.pk,
                     // Staff viewer should be same as max
                     fdbk_settings: mutation_test_suite.staff_viewer_fdbk_config,
                     has_setup_command: true,
@@ -310,6 +312,7 @@ describe('get_submission_result tests', () => {
                     timed_out_tests: ['test2'],
                     num_bugs_exposed: 2,
                     bugs_exposed: ['bug1', 'bug2'],
+                    all_bug_names: mutation_test_suite.buggy_impl_names,
                     total_points: '2.00',
                     total_points_possible: '3.00'
                 }
@@ -366,11 +369,11 @@ describe('get_submission_result tests', () => {
                     }]
                 }]
             }],
-            student_test_suite_results: [
+            mutation_test_suite_results: [
                 {
                     pk: mutation_test_suite_result_pk,
-                    student_test_suite_name: 'Mutation test suite',
-                    student_test_suite_pk: mutation_test_suite.pk,
+                    mutation_test_suite_name: 'Mutation test suite',
+                    mutation_test_suite_pk: mutation_test_suite.pk,
                     // Staff viewer should be same as max
                     fdbk_settings: mutation_test_suite.normal_fdbk_config,
                     has_setup_command: true,
@@ -385,6 +388,7 @@ describe('get_submission_result tests', () => {
                     timed_out_tests: null,
                     num_bugs_exposed: null,
                     bugs_exposed: null,
+                    all_bug_names: null,
                     total_points: 0,
                     total_points_possible: 0,
                 }

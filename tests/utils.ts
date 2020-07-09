@@ -3,6 +3,8 @@ import { writeFileSync } from 'fs';
 
 import { HttpClient } from "..";
 
+const PYTHON = 'python3.8';
+
 export function global_setup() {
     HttpClient.get_instance().set_base_url('http://localhost:9000/api/');
     HttpClient.get_instance().set_default_headers({
@@ -10,7 +12,7 @@ export function global_setup() {
         Cookie: `username=${SUPERUSER_NAME}`
     });
 
-    subprocess_check_call('docker exec typescript-cli-django python3.6 manage.py migrate');
+    subprocess_check_call(`docker exec typescript-cli-django ${PYTHON} manage.py migrate`);
 }
 
 // Flushes all data from the test database and deletes the
@@ -22,10 +24,11 @@ export function reset_db() {
     let delete_data = `import shutil
 from django.core.cache import cache;
 from django.contrib.auth.models import User
-from autograder.core.models import Course, SandboxDockerImage
+from autograder.core.models import Course, SandboxDockerImage, BuildSandboxDockerImageTask
 Course.objects.all().delete()
 User.objects.all().delete()
 SandboxDockerImage.objects.exclude(name='default').delete()
+BuildSandboxDockerImageTask.objects.all().delete()
 
 shutil.rmtree('/usr/src/app/media_root_dev/', ignore_errors=True)
 cache.clear()
@@ -37,7 +40,7 @@ export function run_in_django_shell(python_str: string) {
     // If you add -it to the docker command, be sure to set
     // stdio to ['inherit', ...] for stdin.
     let result = child_process.spawnSync(
-        'docker', ['exec', 'typescript-cli-django', 'python3.6', 'manage.py', 'shell',
+        'docker', ['exec', 'typescript-cli-django', PYTHON, 'manage.py', 'shell',
                    '-c', python_str]);
     let stdout = result.stdout.toString();
     let stderr = result.stderr.toString();
