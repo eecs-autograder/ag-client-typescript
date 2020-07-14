@@ -298,8 +298,12 @@ describe('get_submission_result tests', () => {
                     pk: mutation_test_suite_result_pk,
                     mutation_test_suite_name: 'Mutation test suite',
                     mutation_test_suite_pk: mutation_test_suite.pk,
-                    // Staff viewer should be same as max
-                    fdbk_settings: mutation_test_suite.staff_viewer_fdbk_config,
+                    // Staff viewer should be same as max, except for
+                    // bugs_exposed_fdbk_level
+                    fdbk_settings: {
+                        ...mutation_test_suite.staff_viewer_fdbk_config,
+                        bugs_exposed_fdbk_level: cli.BugsExposedFeedbackLevel.all_bug_names
+                    },
                     has_setup_command: true,
                     setup_command_name: '',
                     setup_return_code: 0,

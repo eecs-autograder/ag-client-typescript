@@ -222,12 +222,12 @@ Project.objects.all().delete()
     });
 
     test('Create project all params', async () => {
-        let now = (new Date()).toISOString();
+        let now = new Date();
         let data = new NewProjectData({
             name: 'project',
             visible_to_students: true,
-            soft_closing_time: now,
-            closing_time: now,
+            soft_closing_time: now.toISOString(),
+            closing_time: now.toISOString(),
 
             disallow_student_submissions: false,
             disallow_group_registration: false,
@@ -250,8 +250,10 @@ Project.objects.all().delete()
         expect(project.name).toEqual('project');
         expect(project.course).toEqual(course.pk);
         expect(project.visible_to_students).toEqual(true);
-        expect_dates_equal(project.soft_closing_time, now);
-        expect_dates_equal(project.closing_time!, now);
+
+        now.setSeconds(0, 0);
+        expect_dates_equal(project.soft_closing_time, now.toISOString());
+        expect_dates_equal(project.closing_time!, now.toISOString());
 
         expect(project.disallow_student_submissions).toEqual(false);
         expect(project.disallow_group_registration).toEqual(false);
