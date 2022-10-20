@@ -11,6 +11,7 @@ export class HandgradingRubricCoreData {
     points_style: PointsStyle;
     max_points: number | null;
     show_grades_and_rubric_to_students: boolean;
+    show_only_applied_rubric_to_students: boolean;
     handgraders_can_leave_comments: boolean;
     handgraders_can_adjust_points: boolean;
 
@@ -21,6 +22,7 @@ export class HandgradingRubricCoreData {
         this.points_style = args.points_style;
         this.max_points = args.max_points;
         this.show_grades_and_rubric_to_students = args.show_grades_and_rubric_to_students;
+        this.show_only_applied_rubric_to_students = args.show_only_applied_rubric_to_students;
         this.handgraders_can_leave_comments = args.handgraders_can_leave_comments;
         this.handgraders_can_adjust_points = args.handgraders_can_adjust_points;
     }
@@ -157,6 +159,7 @@ export class HandgradingRubric extends HandgradingRubricCoreData implements Save
         'points_style',
         'max_points',
         'show_grades_and_rubric_to_students',
+        'show_only_applied_rubric_to_students',
         'handgraders_can_leave_comments',
         'handgraders_can_adjust_points',
     ];
@@ -166,6 +169,7 @@ export class NewHandgradingRubricData {
     points_style?: string;
     max_points?: number;
     show_grades_and_rubric_to_students?: boolean;
+    show_only_applied_rubric_to_students?: boolean;
     handgraders_can_leave_comments?: boolean;
     handgraders_can_adjust_points?: boolean;
 
@@ -173,12 +177,14 @@ export class NewHandgradingRubricData {
         points_style,
         max_points,
         show_grades_and_rubric_to_students,
+        show_only_applied_rubric_to_students,
         handgraders_can_leave_comments,
         handgraders_can_adjust_points,
     }: NewHandgradingRubricData) {
         this.points_style = points_style;
         this.max_points = max_points;
         this.show_grades_and_rubric_to_students = show_grades_and_rubric_to_students;
+        this.show_only_applied_rubric_to_students = show_only_applied_rubric_to_students;
         this.handgraders_can_leave_comments = handgraders_can_leave_comments;
         this.handgraders_can_adjust_points = handgraders_can_adjust_points;
     }
