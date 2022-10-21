@@ -116,6 +116,7 @@ describe('List/create handgrading rubric tests', () => {
             points_style: PointsStyle.start_at_zero_and_add,
             max_points: null,
             show_grades_and_rubric_to_students: false,
+            show_only_applied_rubric_to_students: false,
             handgraders_can_leave_comments: true,
             handgraders_can_adjust_points: true,
             criteria: criteria,
@@ -128,6 +129,7 @@ describe('List/create handgrading rubric tests', () => {
         expect(handgrading_rubric.points_style).toEqual(PointsStyle.start_at_zero_and_add);
         expect(handgrading_rubric.max_points).toBeNull();
         expect(handgrading_rubric.show_grades_and_rubric_to_students).toEqual(false);
+        expect(handgrading_rubric.show_only_applied_rubric_to_students).toEqual(false);
         expect(handgrading_rubric.handgraders_can_leave_comments).toEqual(true);
         expect(handgrading_rubric.handgraders_can_adjust_points).toEqual(true);
 

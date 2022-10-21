@@ -209,6 +209,7 @@ describe('List/create handgrading result tests', () => {
             points_style: PointsStyle.start_at_zero_and_add,
             max_points: null,
             show_grades_and_rubric_to_students: false,
+            show_only_applied_rubric_to_students: false,
             handgraders_can_leave_comments: false,
             handgraders_can_adjust_points: false,
             criteria: criteria,
