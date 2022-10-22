@@ -1,22 +1,32 @@
 version: '3'
 
 services:
+  nginx:
+    image: nginx:latest
+    restart: unless-stopped
+    ports:
+      - "9000:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./autograder-server/media_root_dev:/protected
+
   django:
     restart: unless-stopped
     build:
       context: ./autograder-server
       dockerfile: Dockerfile-django-dev
     container_name: typescript-cli-django
-    ports:
-      - "9000:9000"
     volumes:
       - ./autograder-server:/usr/src/app
-    command: >-
-      python3 manage.py runserver 0.0.0.0:9000
+    command: gunicorn --workers=1 autograder.wsgi:application --bind 0.0.0.0:8000 --error-logfile=- --access-logfile=-
 
     env_file:
       - ./autograder-server/_dev.env
     environment:
+      # This gives us an extra way of verifying that we have X-Accel set up
+      # correctly
+      USE_NGINX_X_ACCEL: 'true'
+
       # Set to false to disable real authentication. Any other string value
       # will enable real authentication.
       # Then, using a browser plugin such as EditThisCookie, set the

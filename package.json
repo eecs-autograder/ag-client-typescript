@@ -3,7 +3,7 @@
   "version": "2.5.0",
   "description": "A client for interacting with the autograder.io API.",
   "scripts": {
-    "test": "tsc -p . --noEmit && jest --runInBand",
+    "test": "tsc -p . --noEmit && jest --runInBand -b",
     "lint": "tsc -p . --noEmit && tslint --project .",
     "build": "tsc -p ."
   },

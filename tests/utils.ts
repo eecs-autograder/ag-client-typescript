@@ -21,7 +21,7 @@ export function reset_db() {
     // Because of the overhead in flushing the database using manage.py flush,
     // we'll instead delete all objects in the "top-level" tables that all
     // the other data depends on.
-    let delete_data = `import shutil
+    let delete_data = `import subprocess
 from django.core.cache import cache;
 from django.contrib.auth.models import User
 from autograder.core.models import Course, SandboxDockerImage, BuildSandboxDockerImageTask
@@ -30,7 +30,7 @@ User.objects.all().delete()
 SandboxDockerImage.objects.exclude(name='default').delete()
 BuildSandboxDockerImageTask.objects.all().delete()
 
-shutil.rmtree('/usr/src/app/media_root_dev/', ignore_errors=True)
+subprocess.run('rm -r /usr/src/app/media_root_dev/*', shell=True)
 cache.clear()
 `;
     run_in_django_shell(delete_data);
