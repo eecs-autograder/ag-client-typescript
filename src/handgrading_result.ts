@@ -228,6 +228,7 @@ export interface GroupWithHandgradingResultSummary extends GroupData {
         total_points: number;
         total_points_possible: number;
     } | null;
+    has_handgradeable_submission: boolean;
 }
 
 export class HandgradingResultPage {
