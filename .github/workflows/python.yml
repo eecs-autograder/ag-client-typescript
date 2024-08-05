@@ -55,7 +55,7 @@ jobs:
       - name: Install npm packages
         run: npm ci
       - name: Apply migrations
-        run: docker exec -it typescript-cli-django python3 manage.py migrate
+        run: docker exec -i typescript-cli-django python3 manage.py migrate
       - name: Lint and test
         run: |
           npm run lint && npm test
