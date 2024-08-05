@@ -24,21 +24,21 @@ services:
       # authenticate as.
       USE_REAL_AUTH: 'false'
 
-  # postgres:
-  #   restart: unless-stopped
-  #   image: postgres:13
-  #   container_name: typescript-cli-postgres
-  #   expose:
-  #     - "5432"
-  #   command: postgres
-  #   environment:
-  #     POSTGRES_PASSWORD: 'postgres'
+  postgres:
+    restart: unless-stopped
+    image: postgres:13
+    container_name: typescript-cli-postgres
+    expose:
+      - "5432"
+    command: postgres
+    environment:
+      POSTGRES_PASSWORD: 'postgres'
 
-  # redis:
-  #   restart: unless-stopped
-  #   image: redis:latest
-  #   expose:
-  #     - "6379"
+  redis:
+    restart: unless-stopped
+    image: redis:latest
+    expose:
+      - "6379"
 
   rabbitmq:
     restart: unless-stopped
