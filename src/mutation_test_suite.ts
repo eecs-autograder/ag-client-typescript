@@ -23,6 +23,7 @@ export class MutationTestSuiteCoreData {
     max_num_student_tests: number;
 
     student_test_validity_check_command: AGCommand;
+    test_name_discovery_whitespace_handling: 'newline' | 'any_whitespace';
     grade_buggy_impl_command: AGCommand;
 
     points_per_exposed_bug: string;
@@ -53,6 +54,7 @@ export class MutationTestSuiteCoreData {
         this.max_num_student_tests = args.max_num_student_tests;
 
         this.student_test_validity_check_command = args.student_test_validity_check_command;
+        this.test_name_discovery_whitespace_handling = args.test_name_discovery_whitespace_handling;
         this.grade_buggy_impl_command = args.grade_buggy_impl_command;
 
         this.points_per_exposed_bug = args.points_per_exposed_bug;
@@ -217,6 +219,7 @@ export class MutationTestSuite extends MutationTestSuiteCoreData implements Save
         'max_num_student_tests',
 
         'student_test_validity_check_command',
+        'test_name_discovery_whitespace_handling',
         'grade_buggy_impl_command',
 
         'points_per_exposed_bug',
