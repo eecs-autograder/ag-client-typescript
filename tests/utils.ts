@@ -3,7 +3,7 @@ import { writeFileSync } from 'fs';
 
 import { HttpClient } from "..";
 
-const PYTHON = 'python3.8';
+const PYTHON = 'python3';
 
 export function global_setup() {
     HttpClient.get_instance().set_base_url('http://localhost:9000/api/');
