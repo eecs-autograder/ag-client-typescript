@@ -140,6 +140,7 @@ describe('MutationTestSuite ctor tests', () => {
             max_num_student_tests: 20,
 
             student_test_validity_check_command: student_test_validity_check_command,
+            test_name_discovery_whitespace_handling: 'any_whitespace',
             grade_buggy_impl_command: grade_buggy_impl_command,
 
             points_per_exposed_bug: "2.00",
