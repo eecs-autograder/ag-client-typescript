@@ -405,7 +405,7 @@ print(image.pk)
         expect(observer.changed_count).toEqual(1);
     });
 
-    test('Check editable flields', async () => {
+    test('Check editable fields', async () => {
         let expected = get_expected_editable_fields('MutationTestSuite');
         expected =  expected.filter((value) => value !== 'docker_image_to_use');
         expected.sort();
