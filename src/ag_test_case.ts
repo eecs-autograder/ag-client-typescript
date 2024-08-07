@@ -109,6 +109,8 @@ export class AGTestCase extends AGTestCaseCoreData implements SaveableAPIObject,
             `/ag_test_suites/${this.ag_test_suite}/ag_test_cases/`,
             {
                 name: new_name,
+                staff_description: this.staff_description,
+                student_description: this.student_description,
                 normal_fdbk_config: this.normal_fdbk_config,
                 ultimate_submission_fdbk_config: this.ultimate_submission_fdbk_config,
                 past_limit_submission_fdbk_config: this.past_limit_submission_fdbk_config,
