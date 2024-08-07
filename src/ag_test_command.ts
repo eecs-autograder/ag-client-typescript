@@ -308,6 +308,10 @@ export class NewAGTestCommandData {
         this.name = args.name;
         this.cmd = args.cmd;
 
+        this.staff_description = args.staff_description;
+        this.student_description = args.student_description;
+        this.student_on_fail_description = args.student_on_fail_description;
+
         this.stdin_source = args.stdin_source;
         this.stdin_text = args.stdin_text;
         this.stdin_instructor_file = args.stdin_instructor_file;

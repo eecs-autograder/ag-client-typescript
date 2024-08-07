@@ -17,6 +17,7 @@ If you forgot the `--recursive` flag, initialize the submodule with:
 ```
 git submodule update --init
 ```
+You'll also need to rerun this command after pulling repository updates.
 
 ### Updating the autograder-server Submodule
 If you are updating this library to include new changes to the autograder-server code, make sure the autograder-server submodule is up to date:
