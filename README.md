@@ -72,6 +72,9 @@ npm ci
 ```
 
 ### Run Linters and Tests
+Note: If you ran `npm run build` (for publishing new package versions), you will need to delete the "dist" folder, otherwise the linter will read the stale `.d.ts` files instead of the updated `.ts` files in the `src` directory.
+
+Run the linters and test suite:
 ```
 npm run lint
 npm test

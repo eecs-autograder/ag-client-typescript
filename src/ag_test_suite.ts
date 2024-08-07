@@ -13,6 +13,9 @@ export class AGTestSuiteCoreData {
     project: ID;
     last_modified: string;
 
+    staff_description: string;
+    student_description: string;
+
     read_only_instructor_files: boolean;
 
     setup_suite_cmd: string;
@@ -36,6 +39,9 @@ export class AGTestSuiteCoreData {
         this.last_modified = args.last_modified;
 
         this.read_only_instructor_files = args.read_only_instructor_files;
+
+        this.staff_description = args.staff_description;
+        this.student_description = args.student_description;
 
         this.setup_suite_cmd = args.setup_suite_cmd;
         this.setup_suite_cmd_name = args.setup_suite_cmd_name;
@@ -196,6 +202,9 @@ export class AGTestSuite extends AGTestSuiteCoreData implements SaveableAPIObjec
         'instructor_files_needed',
         'student_files_needed',
 
+        'staff_description',
+        'student_description',
+
         'read_only_instructor_files',
 
         'setup_suite_cmd',
@@ -223,6 +232,8 @@ export interface AGTestSuiteFeedbackConfig {
 
     show_setup_stdout: boolean;
     show_setup_stderr: boolean;
+
+    show_student_description: boolean;
 }
 
 export class NewAGTestSuiteData {
@@ -230,6 +241,9 @@ export class NewAGTestSuiteData {
 
     instructor_files_needed?: InstructorFile[];
     student_files_needed?: ExpectedStudentFile[];
+
+    staff_description?: string;
+    student_description?: string;
 
     read_only_instructor_files?: boolean;
 
@@ -252,6 +266,9 @@ export class NewAGTestSuiteData {
 
         this.instructor_files_needed = args.instructor_files_needed;
         this.student_files_needed = args.student_files_needed;
+
+        this.staff_description = args.staff_description;
+        this.student_description = args.student_description;
 
         this.read_only_instructor_files =   args.read_only_instructor_files;
 

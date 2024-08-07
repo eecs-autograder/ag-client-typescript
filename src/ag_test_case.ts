@@ -8,6 +8,9 @@ class AGTestCaseCoreData {
     name: string;
     ag_test_suite: ID;
 
+    staff_description: string;
+    student_description: string;
+
     normal_fdbk_config: AGTestCaseFeedbackConfig;
     ultimate_submission_fdbk_config: AGTestCaseFeedbackConfig;
     past_limit_submission_fdbk_config: AGTestCaseFeedbackConfig;
@@ -19,6 +22,9 @@ class AGTestCaseCoreData {
         this.pk = args.pk;
         this.name = args.name;
         this.ag_test_suite = args.ag_test_suite;
+
+        this.staff_description = args.staff_description;
+        this.student_description = args.student_description;
 
         this.normal_fdbk_config = args.normal_fdbk_config;
         this.ultimate_submission_fdbk_config = args.ultimate_submission_fdbk_config;
@@ -183,6 +189,8 @@ export class AGTestCase extends AGTestCaseCoreData implements SaveableAPIObject,
     static readonly EDITABLE_FIELDS: ReadonlyArray<(keyof AGTestCase)> = [
         'name',
         'ag_test_suite',  // Editing this changes the suite the test belongs to.
+        'staff_description',
+        'student_description',
         'normal_fdbk_config',
         'ultimate_submission_fdbk_config',
         'past_limit_submission_fdbk_config',
@@ -193,6 +201,8 @@ export class AGTestCase extends AGTestCaseCoreData implements SaveableAPIObject,
 export class NewAGTestCaseData {
     // IMPORTANT!! If you add fields here, update the whitelist in AGTestCase.copy()
     name: string;
+    staff_description?: string;
+    student_description?: string;
     normal_fdbk_config?: AGTestCaseFeedbackConfig;
     ultimate_submission_fdbk_config?: AGTestCaseFeedbackConfig;
     past_limit_submission_fdbk_config?: AGTestCaseFeedbackConfig;
@@ -200,6 +210,8 @@ export class NewAGTestCaseData {
 
     constructor(args: NewAGTestCaseData) {
         this.name = args.name;
+        this.staff_description = args.staff_description;
+        this.student_description = args.student_description;
         this.normal_fdbk_config = args.normal_fdbk_config;
         this.ultimate_submission_fdbk_config = args.ultimate_submission_fdbk_config;
         this.past_limit_submission_fdbk_config = args.past_limit_submission_fdbk_config;
@@ -210,4 +222,5 @@ export class NewAGTestCaseData {
 export interface AGTestCaseFeedbackConfig {
     visible: boolean;
     show_individual_commands: boolean;
+    show_student_description: boolean;
 }

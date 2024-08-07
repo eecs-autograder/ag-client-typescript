@@ -36,7 +36,8 @@ beforeEach(() => {
 describe('AGTestSuite ctor tests', () => {
     let ag_test_case_fdbk_config: AGTestCaseFeedbackConfig = {
       visible: true,
-      show_individual_commands: false
+      show_individual_commands: false,
+      show_student_description: true,
     };
 
     let ag_test_suite_fdbk_config = {
@@ -48,6 +49,8 @@ describe('AGTestSuite ctor tests', () => {
 
         show_setup_stdout: false,
         show_setup_stderr: true,
+
+        show_student_description: true,
     };
 
     let sandbox_image: SandboxDockerImageData = {
@@ -104,6 +107,8 @@ describe('AGTestSuite ctor tests', () => {
                 pk: 10,
                 name: 'casey',
                 ag_test_suite: 23,
+                staff_description: 'qewrasd',
+                student_description: ';adsfsdfh',
                 normal_fdbk_config: ag_test_case_fdbk_config,
                 ultimate_submission_fdbk_config: ag_test_case_fdbk_config,
                 past_limit_submission_fdbk_config: ag_test_case_fdbk_config,
@@ -120,6 +125,8 @@ describe('AGTestSuite ctor tests', () => {
                 pk: 10,
                 name: 'casey',
                 ag_test_suite: 23,
+                staff_description: 'asdf',
+                student_description: 'qewr',
                 normal_fdbk_config: ag_test_case_fdbk_config,
                 ultimate_submission_fdbk_config: ag_test_case_fdbk_config,
                 past_limit_submission_fdbk_config: ag_test_case_fdbk_config,
@@ -136,6 +143,9 @@ describe('AGTestSuite ctor tests', () => {
             name: 'suitey',
             project: 8,
             last_modified: now,
+
+            staff_description: 'some staff description',
+            student_description: 'some student description',
 
             read_only_instructor_files: false,
 
@@ -163,6 +173,9 @@ describe('AGTestSuite ctor tests', () => {
         expect(ag_test_suite.name).toEqual('suitey');
         expect(ag_test_suite.project).toEqual(8);
         expect(ag_test_suite.last_modified).toEqual(now);
+
+        expect(ag_test_suite.staff_description).toEqual('some staff description');
+        expect(ag_test_suite.student_description).toEqual('some student description');
 
         expect(ag_test_suite.read_only_instructor_files).toEqual(false);
 
@@ -228,6 +241,7 @@ function make_random_feedback_config(): AGTestSuiteFeedbackConfig {
         show_setup_timed_out: rand_bool(),
         show_setup_stdout: rand_bool(),
         show_setup_stderr: rand_bool(),
+        show_student_description: rand_bool(),
     };
 }
 
@@ -295,6 +309,8 @@ print(image.pk)
             project.pk,
             new NewAGTestSuiteData({
                 name: 'A suite',
+                staff_description: 'such descriptive',
+                student_description: 'some test suite',
                 instructor_files_needed: [instructor_file],
                 student_files_needed: [expected_student_file],
                 read_only_instructor_files: false,
@@ -313,6 +329,9 @@ print(image.pk)
 
         expect(suite.name).toEqual('A suite');
         expect(suite.project).toEqual(project.pk);
+
+        expect(suite.staff_description).toEqual('such descriptive');
+        expect(suite.student_description).toEqual('some test suite');
 
         expect(suite.read_only_instructor_files).toEqual(false);
 

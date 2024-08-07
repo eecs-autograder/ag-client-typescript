@@ -60,6 +60,8 @@ beforeAll(async () => {
             show_setup_stderr: false,
             show_setup_stdout: false,
             show_setup_timed_out: false,
+
+            show_student_description: false,
         }
     });
     ag_test_case = await cli.AGTestCase.create(ag_test_suite.pk, {
@@ -88,6 +90,7 @@ beforeAll(async () => {
             show_actual_stderr: false,
             show_points: false,
             show_whether_timed_out: false,
+            show_student_description: true,
         }
     });
 

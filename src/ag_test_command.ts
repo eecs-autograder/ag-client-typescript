@@ -12,6 +12,10 @@ export class AGTestCommandData {
 
     cmd: string;
 
+    staff_description: string;
+    student_description: string;
+    student_on_fail_description: string;
+
     stdin_source: StdinSource;
     stdin_text: string;
     stdin_instructor_file: InstructorFile | null;
@@ -59,6 +63,10 @@ export class AGTestCommandData {
         this.last_modified = args.last_modified;
 
         this.cmd = args.cmd;
+
+        this.staff_description = args.staff_description;
+        this.student_description = args.student_description;
+        this.student_on_fail_description = args.student_on_fail_description;
 
         this.stdin_source = args.stdin_source;
         this.stdin_text = args.stdin_text;
@@ -202,6 +210,10 @@ export class AGTestCommand extends AGTestCommandData implements SaveableAPIObjec
         'name',
         'cmd',
 
+        'staff_description',
+        'student_description',
+        'student_on_fail_description',
+
         'stdin_source',
         'stdin_text',
         'stdin_instructor_file',
@@ -247,6 +259,10 @@ export class AGTestCommand extends AGTestCommandData implements SaveableAPIObjec
 export class NewAGTestCommandData {
     name: string;
     cmd: string;
+
+    staff_description?: string;
+    student_description?: string;
+    student_on_fail_description?: string;
 
     stdin_source?: string;
     stdin_text?: string;
@@ -339,6 +355,7 @@ export interface AGTestCommandFeedbackConfig {
     show_actual_stdout: boolean;
     show_actual_stderr: boolean;
     show_whether_timed_out: boolean;
+    show_student_description: boolean;
 }
 
 export enum ValueFeedbackLevel {

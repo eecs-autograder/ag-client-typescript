@@ -40,6 +40,7 @@ describe('AGTestCase ctor tests', () => {
             show_actual_stdout: true,
             show_actual_stderr: false,
             show_whether_timed_out: true,
+            show_student_description: false,
         };
 
         let now = (new Date()).toISOString();
@@ -53,6 +54,10 @@ describe('AGTestCase ctor tests', () => {
                 last_modified: now,
 
                 cmd: 'voop',
+
+                staff_description: '',
+                student_description: '',
+                student_on_fail_description: '',
 
                 stdin_source: StdinSource.instructor_file,
                 stdin_text: '',
@@ -103,6 +108,10 @@ describe('AGTestCase ctor tests', () => {
 
                 cmd: 'voop',
 
+                staff_description: '',
+                student_description: '',
+                student_on_fail_description: '',
+
                 stdin_source: StdinSource.instructor_file,
                 stdin_text: '',
                 stdin_instructor_file: null,
@@ -147,23 +156,29 @@ describe('AGTestCase ctor tests', () => {
         let normal_fdbk = {
             visible: true,
             show_individual_commands: true,
+            show_student_description: true,
         };
         let ultimate_submission_fdbk = {
             visible: true,
             show_individual_commands: false,
+            show_student_description: false,
         };
         let past_limit_submission_fdbk = {
             visible: false,
             show_individual_commands: true,
+            show_student_description: true,
         };
         let staff_viewer_fdbk = {
             visible: false,
             show_individual_commands: false,
+            show_student_description: false,
         };
         let ag_test_case = new AGTestCase({
             pk: 11,
             name: 'A case',
             ag_test_suite: 22,
+            staff_description: 'description for some staff',
+            student_description: 'an less description',
             normal_fdbk_config: normal_fdbk,
             ultimate_submission_fdbk_config: ultimate_submission_fdbk,
             past_limit_submission_fdbk_config: past_limit_submission_fdbk,
@@ -177,6 +192,8 @@ describe('AGTestCase ctor tests', () => {
         expect(ag_test_case.pk).toEqual(11);
         expect(ag_test_case.name).toEqual('A case');
         expect(ag_test_case.ag_test_suite).toEqual(22);
+        expect(ag_test_case.staff_description).toEqual('description for some staff');
+        expect(ag_test_case.student_description).toEqual('an less description');
         expect(ag_test_case.normal_fdbk_config).toEqual(normal_fdbk);
         expect(ag_test_case.ultimate_submission_fdbk_config).toEqual(ultimate_submission_fdbk);
         expect(ag_test_case.past_limit_submission_fdbk_config).toEqual(past_limit_submission_fdbk);
@@ -258,6 +275,7 @@ function make_random_fdbk_config() {
     return {
         visible: rand_bool(),
         show_individual_commands: rand_bool(),
+        show_student_description: rand_bool(),
     };
 }
 
@@ -316,6 +334,8 @@ AGTestCase.objects.all().delete()
             ag_test_suite.pk,
             new NewAGTestCaseData({
                 name: 'A case',
+                staff_description: 'a walking stick',
+                student_description: 'something about the test',
                 normal_fdbk_config: normal_fdbk,
                 ultimate_submission_fdbk_config: ultimate_submission_fdbk,
                 past_limit_submission_fdbk_config: past_limit_submission_fdbk,
@@ -324,6 +344,8 @@ AGTestCase.objects.all().delete()
         );
 
         expect(ag_test_case.name).toEqual('A case');
+        expect(ag_test_case.staff_description).toEqual('a walking stick');
+        expect(ag_test_case.student_description).toEqual('something about the test');
         expect(ag_test_case.normal_fdbk_config).toEqual(normal_fdbk);
         expect(ag_test_case.ultimate_submission_fdbk_config).toEqual(ultimate_submission_fdbk);
         expect(ag_test_case.past_limit_submission_fdbk_config).toEqual(past_limit_submission_fdbk);
