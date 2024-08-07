@@ -292,7 +292,11 @@ describe('AGTestCase API tests', () => {
 
         let make_cases = `
 from autograder.core.models import AGTestCase
-AGTestCase.objects.validate_and_create(ag_test_suite=${ag_test_suite.pk}, name='Case1')
+AGTestCase.objects.validate_and_create(
+    ag_test_suite=${ag_test_suite.pk}, name='Case1',
+    staff_description='some staffy description',
+    student_description='some studenty description',
+)
 AGTestCase.objects.validate_and_create(ag_test_suite=${ag_test_suite.pk}, name='Case2')
         `;
         run_in_django_shell(make_cases);
@@ -382,6 +386,8 @@ AGTestCase.objects.all().delete()
 
         expect(copied.pk).not.toEqual(ag_test_case.pk);
         expect(copied.name).toEqual('Copied');
+        expect(copied.staff_description).toEqual('some staffy description');
+        expect(copied.student_description).toEqual('some studenty description');
         expect(copied.ag_test_commands.length).toEqual(2);
         expect(copied.ag_test_commands[0].pk).not.toEqual(ag_test_case.ag_test_commands[0].pk);
         expect(copied.ag_test_commands[0].name).toEqual(ag_test_case.ag_test_commands[0].name);

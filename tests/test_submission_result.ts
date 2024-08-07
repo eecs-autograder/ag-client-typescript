@@ -52,6 +52,8 @@ beforeAll(async () => {
         setup_suite_cmd: './setup.sh',
         setup_suite_cmd_name: 'Compile ag suite',
 
+        student_description: 'Some description for the test suite',
+
         normal_fdbk_config: {
             visible: true,
             show_individual_tests: true,
@@ -66,10 +68,21 @@ beforeAll(async () => {
     });
     ag_test_case = await cli.AGTestCase.create(ag_test_suite.pk, {
         name: 'AG Test Case',
+        student_description: 'An regular test case description',
+
+        normal_fdbk_config: {
+            visible: true,
+            show_individual_commands: true,
+            show_student_description: false,
+        },
     });
     ag_test_cmd = await cli.AGTestCommand.create(ag_test_case.pk, {
         name: 'AG Test Cmd',
         cmd: './run.sh',
+
+        student_description: 'A regular command description',
+        student_on_fail_description: 'Description to show on fail',
+
         expected_return_code: cli.ExpectedReturnCode.zero,
         expected_stdout_source: cli.ExpectedOutputSource.text,
         expected_stdout_text: ag_test_cmd_expected_stdout,
@@ -90,7 +103,7 @@ beforeAll(async () => {
             show_actual_stderr: false,
             show_points: false,
             show_whether_timed_out: false,
-            show_student_description: true,
+            show_student_description: false,
         }
     });
 
@@ -340,6 +353,7 @@ describe('get_submission_result tests', () => {
                 ag_test_suite_pk: ag_test_suite.pk,
                 fdbk_settings: ag_test_suite.staff_viewer_fdbk_config, // should be same as max
                 pk: ag_test_suite_result_pk,
+                student_description: 'Some description for the test suite',
                 setup_name: ag_test_suite.setup_suite_cmd_name,
                 setup_return_code: 0,
                 setup_timed_out: false,
@@ -352,6 +366,8 @@ describe('get_submission_result tests', () => {
                     fdbk_settings: ag_test_case.staff_viewer_fdbk_config, // should be same as max
                     pk: ag_test_case_result_pk,
 
+                    student_description: 'An regular test case description',
+
                     total_points: 1,
                     total_points_possible: 7,
 
@@ -360,6 +376,8 @@ describe('get_submission_result tests', () => {
                         ag_test_command_pk: ag_test_cmd.pk,
                         ag_test_command_name: ag_test_cmd.name,
                         fdbk_settings: ag_test_cmd.staff_viewer_fdbk_config,
+                        student_description: 'A regular command description',
+                        student_on_fail_description: 'Description to show on fail',
                         actual_return_code: 0,
                         timed_out: false,
                         expected_return_code: cli.ExpectedReturnCode.zero,
@@ -422,6 +440,7 @@ describe('get_submission_result tests', () => {
                 ag_test_suite_pk: ag_test_suite.pk,
                 fdbk_settings: ag_test_suite.normal_fdbk_config, // should be same as max
                 pk: ag_test_suite_result_pk,
+                student_description: null,
                 setup_name: null,
                 setup_return_code: null,
                 setup_timed_out: null,
@@ -434,6 +453,8 @@ describe('get_submission_result tests', () => {
                     fdbk_settings: ag_test_case.normal_fdbk_config, // should be same as max
                     pk: ag_test_case_result_pk,
 
+                    student_description: null,
+
                     total_points: 0,
                     total_points_possible: 0,
 
@@ -442,6 +463,8 @@ describe('get_submission_result tests', () => {
                         ag_test_command_pk: ag_test_cmd.pk,
                         ag_test_command_name: ag_test_cmd.name,
                         fdbk_settings: ag_test_cmd.normal_fdbk_config,
+                        student_description: null,
+                        student_on_fail_description: null,
                         actual_return_code: null,
                         timed_out: null,
                         expected_return_code: null,
