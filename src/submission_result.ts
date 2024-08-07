@@ -380,6 +380,7 @@ export interface AGTestSuiteResultFeedback {
     ag_test_suite_name: string;
     ag_test_suite_pk: ID;
     fdbk_settings: AGTestSuiteFeedbackConfig;
+    student_description: string | null;
     total_points: number;
     total_points_possible: number;
     setup_name: string | null;
@@ -393,6 +394,7 @@ export interface AGTestCaseResultFeedback {
     ag_test_case_name: string;
     ag_test_case_pk: ID;
     fdbk_settings: AGTestCaseFeedbackConfig;
+    student_description: string | null;
     total_points: number;
     total_points_possible: number;
     ag_test_command_results: AGTestCommandResultFeedback[];
@@ -403,6 +405,8 @@ export interface AGTestCommandResultFeedback {
     ag_test_command_pk: ID;
     ag_test_command_name: string;
     fdbk_settings: AGTestCommandFeedbackConfig;
+    student_description: string | null;
+    student_on_fail_description: string | null;
     timed_out: boolean | null;
     return_code_correct: boolean | null;
     expected_return_code: ExpectedReturnCode | null;

@@ -39,6 +39,10 @@ describe('AGTestCommand ctor tests', () => {
 
             cmd: 'voop!',
 
+            staff_description: 'asljdkfhlasfhshf',
+            student_description: 'qiweuryqoiweyro',
+            student_on_fail_description: 'zmxvcbzmnvbmzbn',
+
             stdin_source: StdinSource.text,
             stdin_text: 'weee',
             stdin_instructor_file: null,
@@ -87,6 +91,10 @@ describe('AGTestCommand ctor tests', () => {
         expect(cmd.last_modified).toEqual(now);
 
         expect(cmd.cmd).toEqual('voop!');
+
+        expect(cmd.staff_description).toEqual('asljdkfhlasfhshf');
+        expect(cmd.student_description).toEqual('qiweuryqoiweyro');
+        expect(cmd.student_on_fail_description).toEqual('zmxvcbzmnvbmzbn');
 
         expect(cmd.stdin_source).toEqual(StdinSource.text);
         expect(cmd.stdin_text).toEqual('weee');
@@ -156,6 +164,10 @@ describe('AGTestCommand ctor tests', () => {
             last_modified: now,
 
             cmd: 'voop!',
+
+            staff_description: 'weeee description',
+            student_description: 'waaaa descriptionn',
+            student_on_fail_description: 'an description',
 
             stdin_source: StdinSource.instructor_file,
             stdin_text: '',
@@ -246,6 +258,7 @@ function make_random_fdbk_config(): AGTestCommandFeedbackConfig {
         show_actual_stdout: rand_bool(),
         show_actual_stderr: rand_bool(),
         show_whether_timed_out: rand_bool(),
+        show_student_description: rand_bool(),
     };
 }
 
@@ -310,6 +323,10 @@ AGTestCommand.objects.all().delete()
                 name: 'some cmd',
                 cmd: 'voop!',
 
+                staff_description: 'weeee description',
+                student_description: 'waaaa descriptionn',
+                student_on_fail_description: 'an description',
+
                 stdin_source: StdinSource.text,
                 stdin_text: 'weee',
                 stdin_instructor_file: null,
@@ -354,6 +371,10 @@ AGTestCommand.objects.all().delete()
 
         expect(cmd.name).toEqual('some cmd');
         expect(cmd.cmd).toEqual('voop!');
+
+        expect(cmd.staff_description).toEqual('weeee description');
+        expect(cmd.student_description).toEqual('waaaa descriptionn');
+        expect(cmd.student_on_fail_description).toEqual('an description');
 
         expect(cmd.stdin_source).toEqual(StdinSource.text);
         expect(cmd.stdin_text).toEqual('weee');
