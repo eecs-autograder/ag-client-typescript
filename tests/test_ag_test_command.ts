@@ -39,6 +39,7 @@ describe('AGTestCommand ctor tests', () => {
 
             cmd: 'voop!',
 
+            internal_admin_notes: 'qiueyqowreuoqwer',
             staff_description: 'asljdkfhlasfhshf',
             student_description: 'qiweuryqoiweyro',
             student_on_fail_description: 'zmxvcbzmnvbmzbn',
@@ -92,6 +93,7 @@ describe('AGTestCommand ctor tests', () => {
 
         expect(cmd.cmd).toEqual('voop!');
 
+        expect(cmd.internal_admin_notes).toEqual('qiueyqowreuoqwer');
         expect(cmd.staff_description).toEqual('asljdkfhlasfhshf');
         expect(cmd.student_description).toEqual('qiweuryqoiweyro');
         expect(cmd.student_on_fail_description).toEqual('zmxvcbzmnvbmzbn');
@@ -165,6 +167,7 @@ describe('AGTestCommand ctor tests', () => {
 
             cmd: 'voop!',
 
+            internal_admin_notes: 'nooooootes',
             staff_description: 'weeee description',
             student_description: 'waaaa descriptionn',
             student_on_fail_description: 'an description',
@@ -323,6 +326,7 @@ AGTestCommand.objects.all().delete()
                 name: 'some cmd',
                 cmd: 'voop!',
 
+                internal_admin_notes: 'nooooootes',
                 staff_description: 'weeee description',
                 student_description: 'waaaa descriptionn',
                 student_on_fail_description: 'an description',
@@ -372,6 +376,7 @@ AGTestCommand.objects.all().delete()
         expect(cmd.name).toEqual('some cmd');
         expect(cmd.cmd).toEqual('voop!');
 
+        expect(cmd.internal_admin_notes).toEqual('nooooootes');
         expect(cmd.staff_description).toEqual('weeee description');
         expect(cmd.student_description).toEqual('waaaa descriptionn');
         expect(cmd.student_on_fail_description).toEqual('an description');
