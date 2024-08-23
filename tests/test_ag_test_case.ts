@@ -55,6 +55,7 @@ describe('AGTestCase ctor tests', () => {
 
                 cmd: 'voop',
 
+                internal_admin_notes: '',
                 staff_description: '',
                 student_description: '',
                 student_on_fail_description: '',
@@ -108,6 +109,7 @@ describe('AGTestCase ctor tests', () => {
 
                 cmd: 'voop',
 
+                internal_admin_notes: '',
                 staff_description: '',
                 student_description: '',
                 student_on_fail_description: '',
@@ -177,6 +179,7 @@ describe('AGTestCase ctor tests', () => {
             pk: 11,
             name: 'A case',
             ag_test_suite: 22,
+            internal_admin_notes: 'very internal admin notes',
             staff_description: 'description for some staff',
             student_description: 'an less description',
             normal_fdbk_config: normal_fdbk,
@@ -192,6 +195,7 @@ describe('AGTestCase ctor tests', () => {
         expect(ag_test_case.pk).toEqual(11);
         expect(ag_test_case.name).toEqual('A case');
         expect(ag_test_case.ag_test_suite).toEqual(22);
+        expect(ag_test_case.internal_admin_notes).toEqual('very internal admin notes');
         expect(ag_test_case.staff_description).toEqual('description for some staff');
         expect(ag_test_case.student_description).toEqual('an less description');
         expect(ag_test_case.normal_fdbk_config).toEqual(normal_fdbk);
@@ -294,6 +298,7 @@ describe('AGTestCase API tests', () => {
 from autograder.core.models import AGTestCase
 AGTestCase.objects.validate_and_create(
     ag_test_suite=${ag_test_suite.pk}, name='Case1',
+    internal_admin_notes='note well this info',
     staff_description='some staffy description',
     student_description='some studenty description',
 )
@@ -338,6 +343,7 @@ AGTestCase.objects.all().delete()
             ag_test_suite.pk,
             new NewAGTestCaseData({
                 name: 'A case',
+                internal_admin_notes: 'note well this info',
                 staff_description: 'a walking stick',
                 student_description: 'something about the test',
                 normal_fdbk_config: normal_fdbk,
@@ -348,6 +354,7 @@ AGTestCase.objects.all().delete()
         );
 
         expect(ag_test_case.name).toEqual('A case');
+        expect(ag_test_case.internal_admin_notes).toEqual('note well this info');
         expect(ag_test_case.staff_description).toEqual('a walking stick');
         expect(ag_test_case.student_description).toEqual('something about the test');
         expect(ag_test_case.normal_fdbk_config).toEqual(normal_fdbk);
@@ -386,6 +393,7 @@ AGTestCase.objects.all().delete()
 
         expect(copied.pk).not.toEqual(ag_test_case.pk);
         expect(copied.name).toEqual('Copied');
+        expect(copied.internal_admin_notes).toEqual('note well this info');
         expect(copied.staff_description).toEqual('some staffy description');
         expect(copied.student_description).toEqual('some studenty description');
         expect(copied.ag_test_commands.length).toEqual(2);

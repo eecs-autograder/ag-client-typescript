@@ -8,6 +8,7 @@ class AGTestCaseCoreData {
     name: string;
     ag_test_suite: ID;
 
+    internal_admin_notes: string;
     staff_description: string;
     student_description: string;
 
@@ -23,6 +24,7 @@ class AGTestCaseCoreData {
         this.name = args.name;
         this.ag_test_suite = args.ag_test_suite;
 
+        this.internal_admin_notes = args.internal_admin_notes;
         this.staff_description = args.staff_description;
         this.student_description = args.student_description;
 
@@ -109,6 +111,7 @@ export class AGTestCase extends AGTestCaseCoreData implements SaveableAPIObject,
             `/ag_test_suites/${this.ag_test_suite}/ag_test_cases/`,
             {
                 name: new_name,
+                internal_admin_notes: this.internal_admin_notes,
                 staff_description: this.staff_description,
                 student_description: this.student_description,
                 normal_fdbk_config: this.normal_fdbk_config,
@@ -191,6 +194,7 @@ export class AGTestCase extends AGTestCaseCoreData implements SaveableAPIObject,
     static readonly EDITABLE_FIELDS: ReadonlyArray<(keyof AGTestCase)> = [
         'name',
         'ag_test_suite',  // Editing this changes the suite the test belongs to.
+        'internal_admin_notes',
         'staff_description',
         'student_description',
         'normal_fdbk_config',
@@ -203,6 +207,7 @@ export class AGTestCase extends AGTestCaseCoreData implements SaveableAPIObject,
 export class NewAGTestCaseData {
     // IMPORTANT!! If you add fields here, update the whitelist in AGTestCase.copy()
     name: string;
+    internal_admin_notes?: string;
     staff_description?: string;
     student_description?: string;
     normal_fdbk_config?: AGTestCaseFeedbackConfig;
@@ -212,6 +217,7 @@ export class NewAGTestCaseData {
 
     constructor(args: NewAGTestCaseData) {
         this.name = args.name;
+        this.internal_admin_notes = args.internal_admin_notes;
         this.staff_description = args.staff_description;
         this.student_description = args.student_description;
         this.normal_fdbk_config = args.normal_fdbk_config;

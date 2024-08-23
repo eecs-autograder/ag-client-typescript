@@ -107,6 +107,7 @@ describe('AGTestSuite ctor tests', () => {
                 pk: 10,
                 name: 'casey',
                 ag_test_suite: 23,
+                internal_admin_notes: 'kasljdbaiwue;fa',
                 staff_description: 'qewrasd',
                 student_description: ';adsfsdfh',
                 normal_fdbk_config: ag_test_case_fdbk_config,
@@ -125,6 +126,7 @@ describe('AGTestSuite ctor tests', () => {
                 pk: 10,
                 name: 'casey',
                 ag_test_suite: 23,
+                internal_admin_notes: 'iqweuyqoweyir',
                 staff_description: 'asdf',
                 student_description: 'qewr',
                 normal_fdbk_config: ag_test_case_fdbk_config,
@@ -144,6 +146,7 @@ describe('AGTestSuite ctor tests', () => {
             project: 8,
             last_modified: now,
 
+            internal_admin_notes: 'some internal admin notes',
             staff_description: 'some staff description',
             student_description: 'some student description',
 
@@ -174,6 +177,7 @@ describe('AGTestSuite ctor tests', () => {
         expect(ag_test_suite.project).toEqual(8);
         expect(ag_test_suite.last_modified).toEqual(now);
 
+        expect(ag_test_suite.internal_admin_notes).toEqual('some internal admin notes');
         expect(ag_test_suite.staff_description).toEqual('some staff description');
         expect(ag_test_suite.student_description).toEqual('some student description');
 
@@ -309,6 +313,7 @@ print(image.pk)
             project.pk,
             new NewAGTestSuiteData({
                 name: 'A suite',
+                internal_admin_notes: 'very describe',
                 staff_description: 'such descriptive',
                 student_description: 'some test suite',
                 instructor_files_needed: [instructor_file],
@@ -330,6 +335,7 @@ print(image.pk)
         expect(suite.name).toEqual('A suite');
         expect(suite.project).toEqual(project.pk);
 
+        expect(suite.internal_admin_notes).toEqual('very describe');
         expect(suite.staff_description).toEqual('such descriptive');
         expect(suite.student_description).toEqual('some test suite');
 

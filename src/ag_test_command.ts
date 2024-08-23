@@ -12,6 +12,7 @@ export class AGTestCommandData {
 
     cmd: string;
 
+    internal_admin_notes: string;
     staff_description: string;
     student_description: string;
     student_on_fail_description: string;
@@ -64,6 +65,7 @@ export class AGTestCommandData {
 
         this.cmd = args.cmd;
 
+        this.internal_admin_notes = args.internal_admin_notes;
         this.staff_description = args.staff_description;
         this.student_description = args.student_description;
         this.student_on_fail_description = args.student_on_fail_description;
@@ -210,6 +212,7 @@ export class AGTestCommand extends AGTestCommandData implements SaveableAPIObjec
         'name',
         'cmd',
 
+        'internal_admin_notes',
         'staff_description',
         'student_description',
         'student_on_fail_description',
@@ -260,6 +263,7 @@ export class NewAGTestCommandData {
     name: string;
     cmd: string;
 
+    internal_admin_notes?: string;
     staff_description?: string;
     student_description?: string;
     student_on_fail_description?: string;
@@ -308,6 +312,7 @@ export class NewAGTestCommandData {
         this.name = args.name;
         this.cmd = args.cmd;
 
+        this.internal_admin_notes = args.internal_admin_notes;
         this.staff_description = args.staff_description;
         this.student_description = args.student_description;
         this.student_on_fail_description = args.student_on_fail_description;
