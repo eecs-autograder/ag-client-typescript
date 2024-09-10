@@ -69,7 +69,10 @@ afterEach(() => {
 
 describe('List/create group tests', () => {
     test('Group ctor', () => {
-        let now = (new Date()).toISOString();
+        const now = (new Date()).toISOString();
+        const later_temp = new Date();
+        later_temp.setDate(later_temp.getDate() + 1);
+        const later = later_temp.toISOString();
 
         let members = [
             new User({
@@ -88,6 +91,8 @@ describe('List/create group tests', () => {
             pk: 6,
             project: project.pk,
             extended_due_date: now,
+            soft_extended_due_date: now,
+            hard_extended_due_date: later,
             members: members,
             member_names: members.map(member => member.username),
             bonus_submissions_remaining: 0,
@@ -217,7 +222,33 @@ describe('Get/update/delete group tests', () => {
     });
 
     test('Update group', async () => {
-        let later = (new Date(2050, 1, 1)).toISOString();
+        const later = (new Date(2050, 1, 1)).toISOString();
+        const laterlater = (new Date(2051, 1, 1)).toISOString();
+
+        group.member_names = ['someothermember@umich.edu'];
+        group.soft_extended_due_date = later;
+        group.hard_extended_due_date = laterlater;
+        group.bonus_submissions_remaining = 4;
+
+        await sleep(1);
+        await group.save();
+
+        let loaded = await Group.get_by_pk(group.pk);
+        expect_dates_equal(loaded.soft_extended_due_date, later);
+        expect_dates_equal(loaded.hard_extended_due_date, laterlater);
+        expect(loaded.member_names).toEqual(['someothermember@umich.edu']);
+        expect(loaded.bonus_submissions_remaining).toEqual(4);
+
+        expect(group).toEqual(loaded);
+
+        expect(observer.group).toEqual(loaded);
+        expect(observer.created_count).toEqual(1);
+        expect(observer.changed_count).toEqual(1);
+        expect(observer.merged_count).toEqual(0);
+    });
+
+    test("Update group with deprecated extended due date", async () => {
+        const later = (new Date(2050, 1, 1)).toISOString();
 
         group.member_names = ['someothermember@umich.edu'];
         group.extended_due_date = later;
@@ -228,15 +259,10 @@ describe('Get/update/delete group tests', () => {
 
         let loaded = await Group.get_by_pk(group.pk);
         expect_dates_equal(loaded.extended_due_date, later);
-        expect(loaded.member_names).toEqual(['someothermember@umich.edu']);
-        expect(loaded.bonus_submissions_remaining).toEqual(4);
 
-        expect(group).toEqual(loaded);
-
-        expect(observer.group).toEqual(loaded);
-        expect(observer.created_count).toEqual(1);
-        expect(observer.changed_count).toEqual(1);
-        expect(observer.merged_count).toEqual(0);
+        // Using `extended_due_date` will set both soft and hard extended due dates
+        expect_dates_equal(loaded.soft_extended_due_date, later);
+        expect_dates_equal(loaded.hard_extended_due_date, later);
     });
 
     test('Refresh group', async () => {
