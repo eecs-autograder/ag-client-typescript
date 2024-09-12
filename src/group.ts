@@ -6,7 +6,8 @@ import { filter_keys, safe_assign } from './utils';
 export class GroupData {
     pk: number;
     project: number;
-    extended_due_date: string | null;
+    soft_extended_due_date: string | null;
+    hard_extended_due_date: string | null;
     readonly members: Readonly<Readonly<User>[]>;
     member_names: string[];
     bonus_submissions_remaining: number;
@@ -19,7 +20,8 @@ export class GroupData {
     constructor({
         pk,
         project,
-        extended_due_date,
+        soft_extended_due_date,
+        hard_extended_due_date,
         members,
         member_names,
         bonus_submissions_remaining,
@@ -31,7 +33,8 @@ export class GroupData {
     }: GroupData) {
         this.pk = pk;
         this.project = project;
-        this.extended_due_date = extended_due_date;
+        this.soft_extended_due_date = soft_extended_due_date;
+        this.hard_extended_due_date = hard_extended_due_date;
         this.members = members;
         this.member_names = member_names;
         this.bonus_submissions_remaining = bonus_submissions_remaining;
@@ -126,12 +129,13 @@ export class Group extends GroupData implements SaveableAPIObject {
     }
 
     async save(): Promise<void> {
+        let filtered_data = filter_keys(this, Group.EDITABLE_FIELDS);
         let response = await HttpClient.get_instance().patch<GroupData>(
             `/groups/${this.pk}/`,
-            filter_keys(this, Group.EDITABLE_FIELDS)
+            filtered_data
         );
 
-        safe_assign(this, response.data);
+        safe_assign(this, new Group(response.data));
         Group.notify_group_changed(this);
     }
 
@@ -153,7 +157,8 @@ export class Group extends GroupData implements SaveableAPIObject {
 
     static readonly EDITABLE_FIELDS: (keyof GroupData)[] = [
         'member_names',
-        'extended_due_date',
+        'soft_extended_due_date',
+        'hard_extended_due_date',
         'bonus_submissions_remaining'
     ];
 }

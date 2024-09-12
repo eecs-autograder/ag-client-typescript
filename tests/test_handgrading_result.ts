@@ -291,7 +291,8 @@ HandgradingResult.objects.validate_and_create(group=group2, handgrading_rubric=h
 
         // Check first result info
         expect(sorted_results[0].project).toEqual(project.pk);
-        expect(sorted_results[0].extended_due_date).toEqual(group.extended_due_date);
+        expect(sorted_results[0].soft_extended_due_date).toEqual(group.soft_extended_due_date);
+        expect(sorted_results[0].hard_extended_due_date).toEqual(group.hard_extended_due_date);
         expect(sorted_results[0].member_names).toEqual(group.member_names);
         expect(sorted_results[0].bonus_submissions_remaining).toEqual(
             group.bonus_submissions_remaining);
@@ -305,7 +306,8 @@ HandgradingResult.objects.validate_and_create(group=group2, handgrading_rubric=h
 
         // Check second result info
         expect(sorted_results[1].project).toEqual(project.pk);
-        expect(sorted_results[1].extended_due_date).toEqual(group2.extended_due_date);
+        expect(sorted_results[1].soft_extended_due_date).toEqual(group.soft_extended_due_date);
+        expect(sorted_results[1].hard_extended_due_date).toEqual(group.hard_extended_due_date);
         expect(sorted_results[1].member_names).toEqual(group2.member_names);
         expect(sorted_results[1].bonus_submissions_remaining).toEqual(
             group2.bonus_submissions_remaining);
