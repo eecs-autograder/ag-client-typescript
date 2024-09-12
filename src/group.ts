@@ -6,10 +6,6 @@ import { filter_keys, safe_assign } from './utils';
 export class GroupData {
     pk: number;
     project: number;
-
-    // DEPRECATED: use soft_extended_due_date and hard_extended_due_date instead
-    extended_due_date: string | null;
-
     soft_extended_due_date: string | null;
     hard_extended_due_date: string | null;
     readonly members: Readonly<Readonly<User>[]>;
@@ -24,7 +20,6 @@ export class GroupData {
     constructor({
         pk,
         project,
-        extended_due_date,
         soft_extended_due_date,
         hard_extended_due_date,
         members,
@@ -38,7 +33,6 @@ export class GroupData {
     }: GroupData) {
         this.pk = pk;
         this.project = project;
-        this.extended_due_date = extended_due_date;
         this.soft_extended_due_date = soft_extended_due_date;
         this.hard_extended_due_date = hard_extended_due_date;
         this.members = members;
@@ -136,20 +130,12 @@ export class Group extends GroupData implements SaveableAPIObject {
 
     async save(): Promise<void> {
         let filtered_data = filter_keys(this, Group.EDITABLE_FIELDS);
-
-        // if using deprecated extended_due_date, ignore any values for
-        // soft and hard extended due dates.
-        if (filtered_data.extended_due_date !== null) {
-            delete filtered_data.soft_extended_due_date;
-            delete filtered_data.hard_extended_due_date;
-        }
-
         let response = await HttpClient.get_instance().patch<GroupData>(
             `/groups/${this.pk}/`,
             filtered_data
         );
 
-        safe_assign(this, response.data);
+        safe_assign(this, new Group(response.data));
         Group.notify_group_changed(this);
     }
 
@@ -171,7 +157,6 @@ export class Group extends GroupData implements SaveableAPIObject {
 
     static readonly EDITABLE_FIELDS: (keyof GroupData)[] = [
         'member_names',
-        'extended_due_date',
         'soft_extended_due_date',
         'hard_extended_due_date',
         'bonus_submissions_remaining'
