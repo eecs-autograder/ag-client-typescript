@@ -391,7 +391,10 @@ describe('get_submission_result tests', () => {
                         stderr_points: 0,
                         stderr_points_possible: 4,
                         total_points: 1,
-                        total_points_possible: 7
+                        total_points_possible: 7,
+                        partial_credit_points: 0,
+                        partial_credit_points_possible: 0,
+                        partial_credit_error: 'none'
                     }]
                 }]
             }],
@@ -479,6 +482,9 @@ describe('get_submission_result tests', () => {
                         stderr_points_possible: 0,
                         total_points: 0,
                         total_points_possible: 0,
+                        partial_credit_points: 0,
+                        partial_credit_points_possible: 0,
+                        partial_credit_error: 'none'
                     }]
                 }]
             }],
