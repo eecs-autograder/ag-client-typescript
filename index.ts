@@ -46,6 +46,7 @@ export {
     StdinSource,
     ExpectedOutputSource,
     ExpectedReturnCode,
+    PartialCreditSource,
 } from './src/ag_test_command';
 export {
     AGTestSuiteData,
