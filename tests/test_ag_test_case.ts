@@ -8,6 +8,7 @@ import {
     Course,
     ExpectedOutputSource,
     ExpectedReturnCode, NewAGTestCaseData,
+    PartialCreditSource,
     Project,
     StdinSource,
     ValueFeedbackLevel,
@@ -74,6 +75,10 @@ describe('AGTestCase ctor tests', () => {
                 expected_stderr_text: '',
                 expected_stderr_instructor_file: null,
 
+                partial_credit_source: PartialCreditSource.none,
+                partial_credit_regex: '',
+                max_points_for_partial_credit: 0,
+
                 ignore_case: true,
                 ignore_whitespace: false,
                 ignore_whitespace_changes: false,
@@ -127,6 +132,10 @@ describe('AGTestCase ctor tests', () => {
                 expected_stderr_source: ExpectedOutputSource.text,
                 expected_stderr_text: '',
                 expected_stderr_instructor_file: null,
+
+                partial_credit_source: PartialCreditSource.none,
+                partial_credit_regex: '',
+                max_points_for_partial_credit: 0,
 
                 ignore_case: true,
                 ignore_whitespace: false,

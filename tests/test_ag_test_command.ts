@@ -3,7 +3,7 @@ import {
     AGTestCommand,
     AGTestCommandObserver, AGTestSuite,
     Course, ExpectedOutputSource, ExpectedReturnCode, InstructorFile,
-    Project, StdinSource,
+    PartialCreditSource, Project, StdinSource,
     ValueFeedbackLevel
 } from "..";
 import { AGTestCommandFeedbackConfig, NewAGTestCommandData } from "../src/ag_test_command";
@@ -57,6 +57,10 @@ describe('AGTestCommand ctor tests', () => {
             expected_stderr_source: ExpectedOutputSource.text,
             expected_stderr_text: 'wuuuu',
             expected_stderr_instructor_file: null,
+
+            partial_credit_source: PartialCreditSource.none,
+            partial_credit_regex: '',
+            max_points_for_partial_credit: 0,
 
             ignore_case: true,
             ignore_whitespace: false,
@@ -185,6 +189,10 @@ describe('AGTestCommand ctor tests', () => {
             expected_stderr_source: ExpectedOutputSource.instructor_file,
             expected_stderr_text: '',
             expected_stderr_instructor_file: stderr_instructor_file,
+
+            partial_credit_source: PartialCreditSource.none,
+            partial_credit_regex: '',
+            max_points_for_partial_credit: 0,
 
             ignore_case: true,
             ignore_whitespace: false,

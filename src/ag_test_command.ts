@@ -31,6 +31,10 @@ export class AGTestCommandData {
     expected_stderr_text: string;
     expected_stderr_instructor_file: InstructorFile | null;
 
+    partial_credit_source: PartialCreditSource;
+    partial_credit_regex: string;
+    max_points_for_partial_credit: number;
+
     ignore_case: boolean;
     ignore_whitespace: boolean;
     ignore_whitespace_changes: boolean;
@@ -81,6 +85,10 @@ export class AGTestCommandData {
         this.expected_stderr_source = args.expected_stderr_source;
         this.expected_stderr_text = args.expected_stderr_text;
         this.expected_stderr_instructor_file = args.expected_stderr_instructor_file;
+
+        this.partial_credit_source = args.partial_credit_source;
+        this.partial_credit_regex = args.partial_credit_regex;
+        this.max_points_for_partial_credit = args.max_points_for_partial_credit;
 
         this.ignore_case = args.ignore_case;
         this.ignore_whitespace = args.ignore_whitespace;
@@ -231,6 +239,10 @@ export class AGTestCommand extends AGTestCommandData implements SaveableAPIObjec
         'expected_stderr_text',
         'expected_stderr_instructor_file',
 
+        'partial_credit_source',
+        'partial_credit_regex',
+        'max_points_for_partial_credit',
+
         'ignore_case',
         'ignore_whitespace',
         'ignore_whitespace_changes',
@@ -282,6 +294,10 @@ export class NewAGTestCommandData {
     expected_stderr_text?: string;
     expected_stderr_instructor_file?: InstructorFile | null;
 
+    partial_credit_source?: PartialCreditSource;
+    partial_credit_regex?: string;
+    max_points_for_partial_credit?: number;
+
     ignore_case?: boolean;
     ignore_whitespace?: boolean;
     ignore_whitespace_changes?: boolean;
@@ -328,6 +344,10 @@ export class NewAGTestCommandData {
         this.expected_stderr_source = args.expected_stderr_source;
         this.expected_stderr_text = args.expected_stderr_text;
         this.expected_stderr_instructor_file = args.expected_stderr_instructor_file;
+
+        this.partial_credit_source = args.partial_credit_source;
+        this.partial_credit_regex = args.partial_credit_regex;
+        this.max_points_for_partial_credit = args.max_points_for_partial_credit;
 
         this.ignore_case = args.ignore_case;
         this.ignore_whitespace = args.ignore_whitespace;
@@ -391,4 +411,10 @@ export enum ExpectedReturnCode {
     none = 'none',
     zero = 'zero',
     nonzero = 'nonzero',
+}
+
+export enum PartialCreditSource {
+    none = 'none',
+    stdout = 'stdout',
+    stderr = 'stderr',
 }

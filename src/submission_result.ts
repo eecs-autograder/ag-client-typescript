@@ -421,6 +421,9 @@ export interface AGTestCommandResultFeedback {
     stderr_points_possible: number;
     total_points: number;
     total_points_possible: number;
+    partial_credit_points: number;
+    partial_credit_points_possible: number;
+    partial_credit_error: string;
 }
 
 export interface MutationTestSuiteResultFeedback {
