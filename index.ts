@@ -46,7 +46,7 @@ export {
     StdinSource,
     ExpectedOutputSource,
     ExpectedReturnCode,
-    PartialCreditSource,
+    CustomScoringSource,
 } from './src/ag_test_command';
 export {
     AGTestSuiteData,
@@ -77,6 +77,7 @@ export {
     AGTestSuiteResultFeedback,
     AGTestCaseResultFeedback,
     AGTestCommandResultFeedback,
+    CustomScoringError,
     MutationTestSuiteResultFeedback,
 } from './src/submission_result';
 

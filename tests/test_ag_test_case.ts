@@ -6,9 +6,9 @@ import {
     AGTestCommandObserver,
     AGTestSuite,
     Course,
+    CustomScoringSource,
     ExpectedOutputSource,
     ExpectedReturnCode, NewAGTestCaseData,
-    PartialCreditSource,
     Project,
     StdinSource,
     ValueFeedbackLevel,
@@ -75,9 +75,9 @@ describe('AGTestCase ctor tests', () => {
                 expected_stderr_text: '',
                 expected_stderr_instructor_file: null,
 
-                partial_credit_source: PartialCreditSource.none,
-                partial_credit_regex: '',
-                max_points_for_partial_credit: 0,
+                custom_scoring_source: CustomScoringSource.none,
+                custom_scoring_regex: '',
+                max_points_for_custom_scoring: 0,
 
                 ignore_case: true,
                 ignore_whitespace: false,
@@ -133,9 +133,9 @@ describe('AGTestCase ctor tests', () => {
                 expected_stderr_text: '',
                 expected_stderr_instructor_file: null,
 
-                partial_credit_source: PartialCreditSource.none,
-                partial_credit_regex: '',
-                max_points_for_partial_credit: 0,
+                custom_scoring_source: CustomScoringSource.none,
+                custom_scoring_regex: '',
+                max_points_for_custom_scoring: 0,
 
                 ignore_case: true,
                 ignore_whitespace: false,
