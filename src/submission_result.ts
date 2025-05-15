@@ -432,6 +432,7 @@ export interface AGTestCommandResultFeedback {
     custom_scoring_points: number;
     custom_scoring_points_possible: number;
     custom_scoring_error: string;
+    custom_scoring_description: string | null;
 }
 
 export interface MutationTestSuiteResultFeedback {
