@@ -34,6 +34,7 @@ export class AGTestCommandData {
     custom_scoring_source: CustomScoringSource;
     custom_scoring_regex: string;
     max_points_for_custom_scoring: number;
+    custom_scoring_label: string | null;
 
     ignore_case: boolean;
     ignore_whitespace: boolean;
@@ -89,6 +90,7 @@ export class AGTestCommandData {
         this.custom_scoring_source = args.custom_scoring_source;
         this.custom_scoring_regex = args.custom_scoring_regex;
         this.max_points_for_custom_scoring = args.max_points_for_custom_scoring;
+        this.custom_scoring_label = args.custom_scoring_label;
 
         this.ignore_case = args.ignore_case;
         this.ignore_whitespace = args.ignore_whitespace;
@@ -242,6 +244,7 @@ export class AGTestCommand extends AGTestCommandData implements SaveableAPIObjec
         'custom_scoring_source',
         'custom_scoring_regex',
         'max_points_for_custom_scoring',
+        'custom_scoring_label',
 
         'ignore_case',
         'ignore_whitespace',

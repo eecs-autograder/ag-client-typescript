@@ -78,6 +78,7 @@ describe('AGTestCase ctor tests', () => {
                 custom_scoring_source: CustomScoringSource.none,
                 custom_scoring_regex: '',
                 max_points_for_custom_scoring: 0,
+                custom_scoring_label: null,
 
                 ignore_case: true,
                 ignore_whitespace: false,
@@ -136,6 +137,7 @@ describe('AGTestCase ctor tests', () => {
                 custom_scoring_source: CustomScoringSource.none,
                 custom_scoring_regex: '',
                 max_points_for_custom_scoring: 0,
+                custom_scoring_label: null,
 
                 ignore_case: true,
                 ignore_whitespace: false,

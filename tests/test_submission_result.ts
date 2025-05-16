@@ -396,7 +396,7 @@ describe('get_submission_result tests', () => {
                         custom_scoring_points: 0,
                         custom_scoring_points_possible: 0,
                         custom_scoring_error: cli.CustomScoringError.none,
-                        custom_scoring_description: null,
+                        custom_scoring_label: null,
                     }]
                 }]
             }],
@@ -488,7 +488,7 @@ describe('get_submission_result tests', () => {
                         custom_scoring_points: 0,
                         custom_scoring_points_possible: 0,
                         custom_scoring_error: cli.CustomScoringError.none,
-                        custom_scoring_description: null,
+                        custom_scoring_label: null,
                     }]
                 }]
             }],

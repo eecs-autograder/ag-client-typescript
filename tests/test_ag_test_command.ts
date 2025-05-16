@@ -67,6 +67,7 @@ describe('AGTestCommand ctor tests', () => {
             custom_scoring_source: CustomScoringSource.none,
             custom_scoring_regex: '',
             max_points_for_custom_scoring: 0,
+            custom_scoring_label: null,
 
             ignore_case: true,
             ignore_whitespace: false,
@@ -121,6 +122,11 @@ describe('AGTestCommand ctor tests', () => {
         expect(cmd.expected_stderr_source).toEqual(ExpectedOutputSource.text);
         expect(cmd.expected_stderr_text).toEqual('wuuuu');
         expect(cmd.expected_stderr_instructor_file).toEqual(null);
+
+        expect(cmd.custom_scoring_source).toEqual(CustomScoringSource.none);
+        expect(cmd.custom_scoring_regex).toEqual('');
+        expect(cmd.max_points_for_custom_scoring).toEqual(0);
+        expect(cmd.custom_scoring_label).toEqual(null);
 
         expect(cmd.ignore_case).toEqual(true);
         expect(cmd.ignore_whitespace).toEqual(false);
@@ -199,6 +205,7 @@ describe('AGTestCommand ctor tests', () => {
             custom_scoring_source: CustomScoringSource.none,
             custom_scoring_regex: '',
             max_points_for_custom_scoring: 0,
+            custom_scoring_label: 'hello',
 
             ignore_case: true,
             ignore_whitespace: false,
@@ -231,6 +238,7 @@ describe('AGTestCommand ctor tests', () => {
         expect(cmd.expected_stdout_instructor_file).toEqual(stdout_instructor_file);
         expect(cmd.expected_stderr_instructor_file).toEqual(stderr_instructor_file);
         expect(cmd.first_failed_test_normal_fdbk_config).toEqual(first_failure_fdbk);
+        expect(cmd.custom_scoring_label).toEqual('hello');
     });
 });
 
