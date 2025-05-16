@@ -392,9 +392,11 @@ describe('get_submission_result tests', () => {
                         stderr_points_possible: 4,
                         total_points: 1,
                         total_points_possible: 7,
-                        partial_credit_points: 0,
-                        partial_credit_points_possible: 0,
-                        partial_credit_error: ''
+                        custom_scoring_used: false,
+                        custom_scoring_points: 0,
+                        custom_scoring_points_possible: 0,
+                        custom_scoring_error: cli.CustomScoringError.none,
+                        custom_scoring_label: null,
                     }]
                 }]
             }],
@@ -482,9 +484,11 @@ describe('get_submission_result tests', () => {
                         stderr_points_possible: 0,
                         total_points: 0,
                         total_points_possible: 0,
-                        partial_credit_points: 0,
-                        partial_credit_points_possible: 0,
-                        partial_credit_error: ''
+                        custom_scoring_used: false,
+                        custom_scoring_points: 0,
+                        custom_scoring_points_possible: 0,
+                        custom_scoring_error: cli.CustomScoringError.none,
+                        custom_scoring_label: null,
                     }]
                 }]
             }],

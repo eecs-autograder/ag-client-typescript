@@ -1,9 +1,15 @@
 import {
     AGTestCase,
     AGTestCommand,
-    AGTestCommandObserver, AGTestSuite,
-    Course, ExpectedOutputSource, ExpectedReturnCode, InstructorFile,
-    PartialCreditSource, Project, StdinSource,
+    AGTestCommandObserver,
+    AGTestSuite,
+    Course,
+    CustomScoringSource,
+    ExpectedOutputSource,
+    ExpectedReturnCode,
+    InstructorFile,
+    Project,
+    StdinSource,
     ValueFeedbackLevel
 } from "..";
 import { AGTestCommandFeedbackConfig, NewAGTestCommandData } from "../src/ag_test_command";
@@ -58,9 +64,10 @@ describe('AGTestCommand ctor tests', () => {
             expected_stderr_text: 'wuuuu',
             expected_stderr_instructor_file: null,
 
-            partial_credit_source: PartialCreditSource.none,
-            partial_credit_regex: '',
-            max_points_for_partial_credit: 0,
+            custom_scoring_source: CustomScoringSource.none,
+            custom_scoring_regex: '',
+            max_points_for_custom_scoring: 0,
+            custom_scoring_label: null,
 
             ignore_case: true,
             ignore_whitespace: false,
@@ -115,6 +122,11 @@ describe('AGTestCommand ctor tests', () => {
         expect(cmd.expected_stderr_source).toEqual(ExpectedOutputSource.text);
         expect(cmd.expected_stderr_text).toEqual('wuuuu');
         expect(cmd.expected_stderr_instructor_file).toEqual(null);
+
+        expect(cmd.custom_scoring_source).toEqual(CustomScoringSource.none);
+        expect(cmd.custom_scoring_regex).toEqual('');
+        expect(cmd.max_points_for_custom_scoring).toEqual(0);
+        expect(cmd.custom_scoring_label).toEqual(null);
 
         expect(cmd.ignore_case).toEqual(true);
         expect(cmd.ignore_whitespace).toEqual(false);
@@ -190,9 +202,10 @@ describe('AGTestCommand ctor tests', () => {
             expected_stderr_text: '',
             expected_stderr_instructor_file: stderr_instructor_file,
 
-            partial_credit_source: PartialCreditSource.none,
-            partial_credit_regex: '',
-            max_points_for_partial_credit: 0,
+            custom_scoring_source: CustomScoringSource.none,
+            custom_scoring_regex: '',
+            max_points_for_custom_scoring: 0,
+            custom_scoring_label: 'hello',
 
             ignore_case: true,
             ignore_whitespace: false,
@@ -225,6 +238,7 @@ describe('AGTestCommand ctor tests', () => {
         expect(cmd.expected_stdout_instructor_file).toEqual(stdout_instructor_file);
         expect(cmd.expected_stderr_instructor_file).toEqual(stderr_instructor_file);
         expect(cmd.first_failed_test_normal_fdbk_config).toEqual(first_failure_fdbk);
+        expect(cmd.custom_scoring_label).toEqual('hello');
     });
 });
 
@@ -321,7 +335,7 @@ AGTestCommand.objects.all().delete()
         expect(cmd.name).toEqual('Cmd1');
     });
 
-    test('Create command all params', async () => {
+    test('Create command all params except custom scoring', async () => {
         let normal_fdbk = make_random_fdbk_config();
         let first_failure_fdbk = make_random_fdbk_config();
         let ultimate_submission_fdbk = make_random_fdbk_config();
@@ -408,6 +422,10 @@ AGTestCommand.objects.all().delete()
         expect(cmd.ignore_whitespace_changes).toEqual(false);
         expect(cmd.ignore_blank_lines).toEqual(true);
 
+        expect(cmd.custom_scoring_source).toEqual(CustomScoringSource.none);
+        expect(cmd.custom_scoring_regex).toEqual('(?i)<!!\\s*score:\\s*(-?\\d+)\\s*!!>');
+        expect(cmd.max_points_for_custom_scoring).toEqual(0);
+
         expect(cmd.points_for_correct_return_code).toEqual(1);
 
         expect(cmd.points_for_correct_stdout).toEqual(2);
@@ -431,6 +449,58 @@ AGTestCommand.objects.all().delete()
 
         expect(observer.ag_test_command).toEqual(cmd);
         expect(observer.created_count).toEqual(1);
+    });
+
+    test('Create command with custom scoring and stdout diff checking', async () => {
+        let cmd = await AGTestCommand.create(
+            ag_test_case.pk,
+            new NewAGTestCommandData({
+                name: 'some cmd',
+                cmd: 'voop!',
+
+                expected_stdout_source: ExpectedOutputSource.text,
+                expected_stdout_text: 'foo',
+                expected_stdout_instructor_file: null,
+
+                custom_scoring_source: CustomScoringSource.stderr,
+                custom_scoring_regex: '\d*',
+                max_points_for_custom_scoring: 42,
+            })
+        );
+
+        expect(cmd.expected_stdout_source).toEqual(ExpectedOutputSource.text);
+        expect(cmd.expected_stdout_text).toEqual('foo');
+        expect(cmd.expected_stdout_instructor_file).toEqual(null);
+
+        expect(cmd.custom_scoring_source).toEqual(CustomScoringSource.stderr);
+        expect(cmd.custom_scoring_regex).toEqual('\d*');
+        expect(cmd.max_points_for_custom_scoring).toEqual(42);
+    });
+
+    test('Create command with custom scoring and stderr diff checking', async () => {
+        let cmd = await AGTestCommand.create(
+            ag_test_case.pk,
+            new NewAGTestCommandData({
+                name: 'some cmd',
+                cmd: 'voop!',
+
+                expected_stderr_source: ExpectedOutputSource.text,
+                expected_stderr_text: 'foo',
+                expected_stderr_instructor_file: null,
+
+                custom_scoring_source: CustomScoringSource.stdout,
+                custom_scoring_regex: '\d*',
+                max_points_for_custom_scoring: 42,
+            })
+        );
+
+        expect(cmd.expected_stderr_source).toEqual(ExpectedOutputSource.text);
+        expect(cmd.expected_stderr_text).toEqual('foo');
+        expect(cmd.expected_stderr_instructor_file).toEqual(null);
+
+        expect(cmd.custom_scoring_source).toEqual(CustomScoringSource.stdout);
+        expect(cmd.custom_scoring_regex).toEqual('\d*');
+        expect(cmd.max_points_for_custom_scoring).toEqual(42);
     });
 
     test('Create command only required params', async () => {

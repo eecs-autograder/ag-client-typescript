@@ -400,6 +400,13 @@ export interface AGTestCaseResultFeedback {
     ag_test_command_results: AGTestCommandResultFeedback[];
 }
 
+export enum CustomScoringError {
+    none = 'none',
+    non_integer = 'non_integer',
+    exceeded_max_points = 'exceeded_max_points',
+    failed_to_find_pattern = 'failed_to_find_pattern',
+}
+
 export interface AGTestCommandResultFeedback {
     pk: ID;
     ag_test_command_pk: ID;
@@ -421,9 +428,11 @@ export interface AGTestCommandResultFeedback {
     stderr_points_possible: number;
     total_points: number;
     total_points_possible: number;
-    partial_credit_points: number;
-    partial_credit_points_possible: number;
-    partial_credit_error: string;
+    custom_scoring_used: boolean;
+    custom_scoring_points: number;
+    custom_scoring_points_possible: number;
+    custom_scoring_error: string;
+    custom_scoring_label: string | null;
 }
 
 export interface MutationTestSuiteResultFeedback {
