@@ -1,25 +1,25 @@
-export { HttpClient, HttpError, HttpResponse } from './src/http_client';
+export { HttpClient, HttpError, HttpResponse } from './http_client';
 
-export { ID } from './src/base';
+export { ID } from './base';
 
-export { AllCourses, Course, CourseObserver, NewCourseData, Semester } from './src/course';
-export { User, UserRoles } from './src/user';
+export { AllCourses, Course, CourseObserver, NewCourseData, Semester } from './course';
+export { User, UserRoles } from './user';
 
 export { NewProjectData, Project, ProjectObserver,
-         UltimateSubmissionPolicy } from './src/project';
+         UltimateSubmissionPolicy } from './project';
 
-export { InstructorFile, InstructorFileObserver } from './src/instructor_file';
+export { InstructorFile, InstructorFileObserver } from './instructor_file';
 export { ExpectedStudentFile, ExpectedStudentFileObserver,
-         NewExpectedStudentFileData } from './src/expected_student_file';
-export { Group, GroupObserver, NewGroupData } from './src/group';
-export { GroupInvitation } from './src/group_invitation';
+         NewExpectedStudentFileData } from './expected_student_file';
+export { Group, GroupObserver, NewGroupData } from './group';
+export { GroupInvitation } from './group_invitation';
 export {
     GradingStatus,
     Submission,
     SubmissionData,
     SubmissionObserver,
     SubmissionWithResults
-} from './src/submission';
+} from './submission';
 
 export {
     SandboxDockerImage,
@@ -27,16 +27,16 @@ export {
     BuildImageStatus,
     BuildSandboxDockerImageTask,
     BuildSandboxDockerImageTaskData,
-} from './src/sandbox_docker_image';
+} from './sandbox_docker_image';
 
-export { AGCommand } from './src/ag_command';
+export { AGCommand } from './ag_command';
 export {
     AGTestCaseData,
     AGTestCaseObserver,
     AGTestCase,
     AGTestCaseFeedbackConfig,
     NewAGTestCaseData,
-} from './src/ag_test_case';
+} from './ag_test_case';
 export {
     AGTestCommandData,
     AGTestCommandObserver,
@@ -47,14 +47,14 @@ export {
     ExpectedOutputSource,
     ExpectedReturnCode,
     CustomScoringSource,
-} from './src/ag_test_command';
+} from './ag_test_command';
 export {
     AGTestSuiteData,
     AGTestSuiteObserver,
     AGTestSuite,
     AGTestSuiteFeedbackConfig,
     NewAGTestSuiteData,
-} from './src/ag_test_suite';
+} from './ag_test_suite';
 
 export {
     BugsExposedFeedbackLevel,
@@ -63,7 +63,7 @@ export {
     MutationTestSuite,
     MutationTestSuiteFeedbackConfig,
     NewMutationTestSuiteData,
-} from './src/mutation_test_suite';
+} from './mutation_test_suite';
 
 export {
     FeedbackCategory,
@@ -79,33 +79,33 @@ export {
     AGTestCommandResultFeedback,
     CustomScoringError,
     MutationTestSuiteResultFeedback,
-} from './src/submission_result';
+} from './submission_result';
 
 export {
     RerunSubmissionTaskData,
     RerunSubmissionTask,
     NewRerunSubmissionTaskData,
-} from './src/rerun_submission_task';
+} from './rerun_submission_task';
 
 export { Annotation, AnnotationData, AnnotationObserver,
-         NewAnnotationData } from './src/annotation';
+         NewAnnotationData } from './annotation';
 export {
     AppliedAnnotation,
     AppliedAnnotationData,
     AppliedAnnotationObserver,
     NewAppliedAnnotationData,
     Location
-} from './src/applied_annotation';
-export { Comment, CommentData, CommentObserver, NewCommentData } from './src/comment';
-export { Criterion, CriterionData, CriterionObserver, NewCriterionData } from './src/criterion';
+} from './applied_annotation';
+export { Comment, CommentData, CommentObserver, NewCommentData } from './comment';
+export { Criterion, CriterionData, CriterionObserver, NewCriterionData } from './criterion';
 export { CriterionResult, CriterionResultData, CriterionResultObserver,
-         NewCriterionResultData } from './src/criterion_result';
+         NewCriterionResultData } from './criterion_result';
 export {
     GroupWithHandgradingResultSummary,
     HandgradingResult,
     HandgradingResultData,
     HandgradingResultObserver,
     HandgradingResultPage,
-} from './src/handgrading_result';
+} from './handgrading_result';
 export { HandgradingRubric, HandgradingRubricData, HandgradingRubricObserver,
-         NewHandgradingRubricData, PointsStyle } from './src/handgrading_rubric';
+         NewHandgradingRubricData, PointsStyle } from './handgrading_rubric';
