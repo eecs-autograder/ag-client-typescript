@@ -96,9 +96,12 @@ Use feature branches for all changes, and make a pull request against the `devel
 ### "release-*" branches
 Name release branches as `release-YYYY.MM.x`, replacing YYYY with the full year and MM with the zero padded month (e.g., `release-2024.08.x`).
 
+**IMPORTANT**: When you create a release branch, update the `branch` field in the `autograder-server` entry of `.gitmodules` to point to the corresponding release branch in the `autograder-server` submodule.
+Then run `git submodule update --remote` and commit the changes.
+
 Do NOT merge or rebase directly between the develop and release branches.
 Once a release branch is created, it should only be updated with bugfix- or (rarely) feature-style branches.
-Squash-and-merge for this type of PRs.
+Squash-and-merge for this type of PR.
 After the squashed branch is merged into a release branch, cherry-pick the squashed commit on top of `develop` and open a pull request to merge the changes into `develop`.
 
 The version of `README.md` (this file) on the `develop` branch is the source of truth.
