@@ -95,6 +95,18 @@ Include them anyway when triggering a `workflow_dispatch` event so that the bran
 ### "develop" branch
 Use feature branches for all changes, and make a pull request against the `develop` branch.
 
+The `develop` branch is for changes based on the `develop` branch of the `autograder-server` repo (which is a submodule of this repo found at `tests/local_stack/autograder-server`).
+Update the submodule `develop` branch when starting work on a feature that depends on new `autograder-server` commits.
+Use the following steps on your feature branch:
+```
+# Fetch latest submodule commits
+git submodule update --remote
+# git status should show new commits in the submodule
+git status
+git add tests/local_stack/autograder-server
+git commit -m "Update submodule"
+```
+
 ### "release-*" branches
 Name release branches as `release-YYYY.MM.x`, replacing YYYY with the full year and MM with the zero padded month (e.g., `release-2024.08.x`).
 
