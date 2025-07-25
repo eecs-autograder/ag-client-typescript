@@ -87,6 +87,8 @@ For example: `2024.08.0` corresponds to August 2024.
 We also make use of pre-release modifiers such as `.devX`.
 For consistency across Autograder.io's modules, pre-release modifiers will start with a dot (e.g., `.devX`) in **Git tags**.
 In `package.json` and `package-lock.json`, pre-release modifiers will start with a hyphen (e.g., `-devX`) because npm requires this format.
+Note that `npm version` will also strip leading zeros from the version.
+Include them anyway when triggering a `workflow_dispatch` event so that the branch and tag names are zero-padded.
 
 ## Development & Release Branches: Protocols and Workflow
 
@@ -114,3 +116,6 @@ Pass the version number as input.
 
 CI will update the version number, lint and test the module, tag the release, and create a GitHub release.
 At time of writing, the workflow does not publish to NPM
+
+Note that `npm version` will strip leading zeros from the version numbers written to `package*.json`.
+Include them anyway when triggering a `workflow_dispatch` event so that the branch and tag names are zero-padded.
