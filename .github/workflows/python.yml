@@ -1,6 +1,16 @@
 name: Python package
 
-on: [push]
+on:
+  push:
+    branches: [ develop, release* ]
+    tags:
+      - '*'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number for release'
+        required: true
 
 jobs:
   test:
