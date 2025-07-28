@@ -1,4 +1,4 @@
-name: Python package
+name: Typescript API Client
 
 on:
   push:
