@@ -40,7 +40,7 @@ export function run_in_django_shell(python_str: string) {
     // If you add -it to the docker command, be sure to set
     // stdio to ['inherit', ...] for stdin.
     let result = child_process.spawnSync(
-        'docker', ['exec', 'typescript-cli-django', PYTHON, 'manage.py', 'shell',
+        'docker', ['exec', 'typescript-cli-django', PYTHON, 'manage.py', 'shell', '-v0',
                    '-c', python_str]);
     let stdout = result.stdout.toString();
     let stderr = result.stderr.toString();
