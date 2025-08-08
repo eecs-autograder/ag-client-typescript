@@ -1,22 +1,36 @@
-version: '3'
-
 services:
+  nginx:
+    build: ./nginx
+    restart: unless-stopped
+    ports:
+      - "9000:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      # We can't mount ./autograder-server/media_root_dev directly
+      # because it gets deleted and recreated between each test.
+      # Instead, we mount the whole autograder-server directory
+      # and symlink /protected inside the container to point to
+      # autograder-server/media_root_dev
+      - ./autograder-server:/autograder-server
+
   django:
     restart: unless-stopped
     build:
       context: ./autograder-server
       dockerfile: Dockerfile-django-dev
     container_name: typescript-cli-django
-    ports:
-      - "9000:9000"
+    expose:
+      - "8080"
     volumes:
       - ./autograder-server:/usr/src/app
     command: >-
-      python3 manage.py runserver 0.0.0.0:9000
+      python3 manage.py runserver 0.0.0.0:8000
 
     env_file:
       - ./autograder-server/_dev.env
     environment:
+      USE_NGINX_X_ACCEL: 'true'
+
       # Set to false to disable real authentication. Any other string value
       # will enable real authentication.
       # Then, using a browser plugin such as EditThisCookie, set the

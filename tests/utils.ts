@@ -167,11 +167,11 @@ export async function check_tar_file(blob: Blob, expected_archive_member_names: 
     let result = child_process.spawnSync(`tar -tzf ${filename}`, {shell: true});
 
     let stdout = result.stdout.toString();
-    expect(stdout).toEqual(expected_archive_member_names.join('\n') + '\n');
     let stderr = result.stderr.toString();
     if (result.status !== 0) {
         console.log(stderr);
     }
+    expect(stdout).toEqual(expected_archive_member_names.join('\n') + '\n');
     expect(result.status).toEqual(0);
 }
 
