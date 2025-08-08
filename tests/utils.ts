@@ -40,7 +40,7 @@ export function run_in_django_shell(python_str: string) {
     // If you add -it to the docker command, be sure to set
     // stdio to ['inherit', ...] for stdin.
     let result = child_process.spawnSync(
-        'docker', ['exec', 'typescript-cli-django', PYTHON, 'manage.py', 'shell',
+        'docker', ['exec', 'typescript-cli-django', PYTHON, 'manage.py', 'shell', '-v0',
                    '-c', python_str]);
     let stdout = result.stdout.toString();
     let stderr = result.stderr.toString();
@@ -167,11 +167,11 @@ export async function check_tar_file(blob: Blob, expected_archive_member_names: 
     let result = child_process.spawnSync(`tar -tzf ${filename}`, {shell: true});
 
     let stdout = result.stdout.toString();
-    expect(stdout).toEqual(expected_archive_member_names.join('\n') + '\n');
     let stderr = result.stderr.toString();
     if (result.status !== 0) {
         console.log(stderr);
     }
+    expect(stdout).toEqual(expected_archive_member_names.join('\n') + '\n');
     expect(result.status).toEqual(0);
 }
 
