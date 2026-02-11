@@ -65,6 +65,7 @@ describe('Project ctor tests', () => {
             visible_to_students: true,
             closing_time: null,
             soft_closing_time: null,
+            timezone: 'UTC',
             disallow_student_submissions: false,
             disallow_group_registration: false,
             guests_can_submit: true,
@@ -75,7 +76,6 @@ describe('Project ctor tests', () => {
             allow_submissions_past_limit: true,
             groups_combine_daily_submissions: false,
             submission_limit_reset_time: '0:00',
-            submission_limit_reset_timezone: 'UTC',
 
             num_bonus_submissions: 0,
 
@@ -114,7 +114,7 @@ describe('Project ctor tests', () => {
         expect(project.allow_submissions_past_limit).toEqual(true);
         expect(project.groups_combine_daily_submissions).toEqual(false);
         expect(project.submission_limit_reset_time).toEqual('0:00');
-        expect(project.submission_limit_reset_timezone).toEqual('UTC');
+        expect(project.timezone).toEqual('UTC');
 
         expect(project.num_bonus_submissions).toEqual(0);
 
@@ -156,7 +156,7 @@ describe('Project ctor tests', () => {
             allow_submissions_past_limit: true,
             groups_combine_daily_submissions: false,
             submission_limit_reset_time: '0:00',
-            submission_limit_reset_timezone: 'UTC',
+            timezone: 'UTC',
             num_bonus_submissions: 0,
             total_submission_limit: null,
             allow_late_days: true,
@@ -252,7 +252,7 @@ Project.objects.all().delete()
             allow_submissions_past_limit: true,
             groups_combine_daily_submissions: false,
             submission_limit_reset_time: '00:00:00',
-            submission_limit_reset_timezone: 'UTC',
+            timezone: 'UTC',
             num_bonus_submissions: 0,
             total_submission_limit: null,
             allow_late_days: true,
@@ -278,7 +278,7 @@ Project.objects.all().delete()
         expect(project.allow_submissions_past_limit).toEqual(true);
         expect(project.groups_combine_daily_submissions).toEqual(false);
         expect(project.submission_limit_reset_time).toEqual('00:00:00');
-        expect(project.submission_limit_reset_timezone).toEqual('UTC');
+        expect(project.timezone).toEqual('UTC');
         expect(project.num_bonus_submissions).toEqual(0);
         expect(project.total_submission_limit).toEqual(null);
         expect(project.allow_late_days).toEqual(true);

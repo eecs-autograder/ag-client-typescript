@@ -13,6 +13,7 @@ class ProjectCoreData {
     visible_to_students: boolean;
     closing_time?: string | null;
     soft_closing_time: string | null;
+    timezone: string;
     disallow_student_submissions: boolean;
     disallow_group_registration: boolean;
     guests_can_submit: boolean;
@@ -23,7 +24,6 @@ class ProjectCoreData {
     allow_submissions_past_limit: boolean;
     groups_combine_daily_submissions: boolean;
     submission_limit_reset_time: string;
-    submission_limit_reset_timezone: string;
 
     num_bonus_submissions: number;
 
@@ -50,6 +50,7 @@ class ProjectCoreData {
         this.visible_to_students = args.visible_to_students;
         this.closing_time = args.closing_time;
         this.soft_closing_time = args.soft_closing_time;
+        this.timezone = args.timezone;
         this.disallow_student_submissions = args.disallow_student_submissions;
         this.disallow_group_registration = args.disallow_group_registration;
         this.guests_can_submit = args.guests_can_submit;
@@ -60,7 +61,6 @@ class ProjectCoreData {
         this.allow_submissions_past_limit = args.allow_submissions_past_limit;
         this.groups_combine_daily_submissions = args.groups_combine_daily_submissions;
         this.submission_limit_reset_time = args.submission_limit_reset_time;
-        this.submission_limit_reset_timezone = args.submission_limit_reset_timezone;
 
         this.num_bonus_submissions = args.num_bonus_submissions;
 
@@ -190,6 +190,7 @@ export class Project extends ProjectCoreData implements SaveableAPIObject {
         'visible_to_students',
         'closing_time',
         'soft_closing_time',
+        'timezone',
         'disallow_student_submissions',
         'disallow_group_registration',
         'guests_can_submit',
@@ -200,7 +201,6 @@ export class Project extends ProjectCoreData implements SaveableAPIObject {
         'allow_submissions_past_limit',
         'groups_combine_daily_submissions',
         'submission_limit_reset_time',
-        'submission_limit_reset_timezone',
 
         'num_bonus_submissions',
 
@@ -241,6 +241,7 @@ export class NewProjectData {
     visible_to_students?: boolean;
     closing_time?: string | null;
     soft_closing_time?: string | null;
+    timezone?: string;
     disallow_student_submissions?: boolean;
     disallow_group_registration?: boolean;
     guests_can_submit?: boolean;
@@ -251,7 +252,6 @@ export class NewProjectData {
     allow_submissions_past_limit?: boolean;
     groups_combine_daily_submissions?: boolean;
     submission_limit_reset_time?: string;
-    submission_limit_reset_timezone?: string;
 
     num_bonus_submissions?: number;
 
@@ -273,6 +273,7 @@ export class NewProjectData {
         this.visible_to_students = args.visible_to_students;
         this.closing_time = args.closing_time;
         this.soft_closing_time = args.soft_closing_time;
+        this.timezone = args.timezone;
         this.disallow_student_submissions = args.disallow_student_submissions;
         this.disallow_group_registration = args.disallow_group_registration;
         this.guests_can_submit = args.guests_can_submit;
@@ -283,7 +284,6 @@ export class NewProjectData {
         this.allow_submissions_past_limit = args.allow_submissions_past_limit;
         this.groups_combine_daily_submissions = args.groups_combine_daily_submissions;
         this.submission_limit_reset_time = args.submission_limit_reset_time;
-        this.submission_limit_reset_timezone = args.submission_limit_reset_timezone;
 
         this.num_bonus_submissions = args.num_bonus_submissions;
 
