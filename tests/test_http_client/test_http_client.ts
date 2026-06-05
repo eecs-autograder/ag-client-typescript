@@ -42,7 +42,15 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    return axios.post('/shutdown', {timeout: 1000});
+    await axios.post('/shutdown', {timeout: 1000});
+    await new Promise<void>(resolve => {
+        if (server_process === null || server_process.exitCode !== null) {
+            resolve();
+        }
+        else {
+            server_process.on('exit', () => resolve());
+        }
+    });
 });
 
 describe('HttpResponse tests', () => {
