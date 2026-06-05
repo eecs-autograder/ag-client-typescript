@@ -199,7 +199,7 @@ print(invitation.pk)
             await invitation.refresh();
             fail('404 error not thrown');
         }
-        catch (e) {
+        catch (e: any) {
             expect(e.status).toEqual(404);
         }
     });
