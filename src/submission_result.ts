@@ -15,7 +15,7 @@ export enum FeedbackCategory {
     max = 'max',
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
+// tslint:disable-next-line: no-namespace
 export namespace SubmissionResults {
     export async function get_all_ultimate_submission_results(
         project_pk: number,
@@ -90,7 +90,7 @@ interface UltimateSubmissionResult<Minimal extends boolean> {
     } | null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
+// tslint:disable-next-line: no-namespace
 export namespace ResultOutput {
     export async function get_ag_test_cmd_result_output_size(
         submission_pk: ID,

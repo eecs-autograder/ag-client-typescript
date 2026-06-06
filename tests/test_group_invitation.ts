@@ -200,7 +200,7 @@ print(invitation.pk)
             fail('404 error not thrown');
         }
         catch (e) {
-            expect((e as {status: number}).status).toEqual(404);
+            expect(e.status).toEqual(404);
         }
     });
 });

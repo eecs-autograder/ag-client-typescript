@@ -16,7 +16,7 @@ export function filter_keys<T, Key extends keyof T>(data: T,
 //          private _spam_brand: unknown;
 //      }
 export function safe_assign<ToType extends FromType, FromType>(to: ToType, from: FromType) {
-    Object.assign(to as object, from as object);
+    Object.assign(to, from);
 }
 
 // Sorts the given array in place by the "name" attribute of its elements.
