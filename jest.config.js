@@ -13,9 +13,13 @@ module.exports = {
         "js",
         "jsx"
     ],
-    "moduleDirectories": ["node_modules", "."],
+    "testEnvironment": "jsdom",
+    "moduleDirectories": ["node_modules"],
+    "moduleNameMapper": {
+        "^src/(.*)$": "<rootDir>/src/$1"
+    },
     // The port should be the same as the one that the Django Docker container exposes.
-    "testURL": "http://localhost:9000",
+    "testEnvironmentOptions": { "url": "http://localhost:9000" },
 
     cache: false,
 
