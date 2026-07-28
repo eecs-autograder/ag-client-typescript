@@ -1,4 +1,4 @@
 [submodule "autograder-server"]
 	path = autograder-server
 	url = ../autograder-server.git
-	branch = develop 
+	branch = release-2026.08.X
