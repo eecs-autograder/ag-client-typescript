@@ -12,17 +12,20 @@ jobs:
     name: Create GitHub Release
     runs-on: ubuntu-24.04
 
-    permissions:
-      contents: write  # IMPORTANT: mandatory for making GitHub Releases
-
     steps:
       # See https://github.com/organizations/eecs-autograder/settings/apps
       # and https://github.com/orgs/community/discussions/25305#discussioncomment-8256560
-      - uses: actions/create-github-app-token@v2
+      - uses: actions/create-github-app-token@v3
         id: app-token
         with:
-          app-id: ${{ vars.VERSION_BUMPER_APPID }}
+          client-id: ${{ vars.VERSION_BUMPER_APPID }}
           private-key: ${{ secrets.VERSION_BUMPER_SECRET }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            ag-client-typescript
+            ag-website-vue
+          permission-contents: write
+          permission-actions: write
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,5 +49,5 @@ jobs:
           gh workflow run \
             --repo eecs-autograder/ag-website-vue \
             'Full Release' \
-            --raw-field version="${{ inputs.version }}"
-            \ --ref actions/release-flow
+            --raw-field version="${{ inputs.version }}" \
+            --ref actions/release-flow
