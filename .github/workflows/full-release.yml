@@ -31,6 +31,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0  # fetch all branch and tag history
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Get GitHub App User ID
@@ -46,11 +47,8 @@ jobs:
         id: make-branch
         run: |
           branch=$(./dev_scripts/ci/release_branch_from_version.sh "${{ inputs.version }}")
-          if  git checkout -b $branch; then
-            git push -u origin $branch
-          else
-            git checkout $branch
-          fi
+          git checkout -b $branch --track origin/$branch
+          git push -u origin $branch || echo "Remote branch already exists"
           echo "release_branch=$branch" >> "$GITHUB_OUTPUT"
 
       - name: 'Update submodules'
@@ -58,18 +56,27 @@ jobs:
           git config --file=.gitmodules submodule.autograder-server.branch ${{ steps.make-branch.outputs.release_branch }}
           git submodule update --remote --recursive
           git add .gitmodules autograder-server
-          git commit -m "Update submodule"
-          git push
+          if git commit -m "Update submodule"; then
+            git push
+          else
+            echo "Submodules already updated"
+          fi
 
       - name: Update version number
-        run: ./dev_scripts/ci/update_version_number.sh "${{ inputs.version }}"
-      - name: Commit updated version files
         run: |
-          git add package.json package-lock.json
-          git commit -m "Version ${{ inputs.version }}"
-          git push
-          git tag ${{ inputs.version }}
-          git push --tags
+          /dev_scripts/ci/update_version_number.sh "${{ inputs.version }}"
+          git add -u
+          if git commit -m "Version ${{ inputs.version }}"; then
+            git push
+          else
+            echo "Version already updated"
+          fi
+
+          if git tag ${{ inputs.version }}; then
+            git push --tags
+          else
+            echo "Tag already exists"
+          fi
 
       # - name: Create GitHub Release
       #   env:
