@@ -1,6 +1,6 @@
 {
   "name": "ag-client-typescript",
-  "version": "2.0.0-dev1",
+  "version": "2.0.0-dev4",
   "description": "A client for interacting with the autograder.io API.",
   "scripts": {
     "clean": "rm -rf ./dist",
