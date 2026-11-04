@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          submodules: recursive
           token: ${{ steps.app-token.outputs.token }}
 
       - name: Get GitHub App User ID
@@ -42,12 +42,50 @@ jobs:
           git config --global user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
           git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
 
-      - name: Start the autograder-server release
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+      - name: Create or checkout release branch
+        id: make-branch
         run: |
-          gh workflow run \
-            --repo eecs-autograder/ag-website-vue \
-            'Full Release' \
-            --raw-field version="${{ inputs.version }}" \
-            --ref actions/release-flow
+          branch=$(./dev_scripts/ci/release_branch_from_version.sh "${{ inputs.version }}")
+          if  git checkout -b $branch; then
+            git push -u origin $branch
+          else
+            git checkout $branch
+          fi
+          echo "release_branch=$branch" >> "$GITHUB_OUTPUT"
+
+      - name: 'Update submodules'
+        run: |
+          git config --file=.gitmodules submodule.autograder-server.branch ${{ steps.make-branch.outputs.release_branch }}
+          git submodule update --remote --recursive
+          git add .gitmodules autograder-server
+          git commit -m "Update submodule"
+          git push
+
+      - name: Update version number
+        run: ./dev_scripts/ci/update_version_number.sh "${{ inputs.version }}"
+      - name: Commit updated version files
+        run: |
+          git add package.json package-lock.json
+          git commit -m "Version ${{ inputs.version }}"
+          git push
+          git tag ${{ inputs.version }}
+          git push --tags
+
+      # - name: Create GitHub Release
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
+      #   run: >-
+      #     gh release create
+      #     "${{ inputs.version }}"
+      #     --repo "$GITHUB_REPOSITORY"
+      #     --notes ""
+
+      # - name: Start the ag-website-vue release
+      #   env:
+      #     GH_TOKEN: ${{ steps.app-token.outputs.token }}
+      #   run: |
+      #     gh workflow run \
+      #       --repo eecs-autograder/ag-website-vue \
+      #       'Full Release' \
+      #       --raw-field version="${{ inputs.version }}" \
+      #       --ref actions/release-flow
